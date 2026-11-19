@@ -33,7 +33,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline
 ul { list-style: none; }
 
 /* ---------- 3D journey ---------- */
-#journey { position: relative; height: 2400vh; }
+#journey { position: relative; height: 800vh; }
 .pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 #stage, #stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #fade { position: absolute; inset: 0; background: var(--cherry); opacity: 0; pointer-events: none; }
@@ -468,8 +468,17 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     v.src = src; v.muted = true; v.loop = true; v.playsInline = true; v.autoplay = true;
     v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.preload = "auto";
     videos.push(v);
-    var t = new THREE.VideoTexture(v);
-    t.encoding = THREE.sRGBEncoding; t.minFilter = THREE.LinearFilter;
+    // Upload a video frame to the GPU only when the video actually has a new one
+    // (a plain VideoTexture re-uploads every render frame, which causes the stutter)
+    var t = new THREE.Texture(v);
+    t.encoding = THREE.sRGBEncoding; t.minFilter = THREE.LinearFilter; t.magFilter = THREE.LinearFilter;
+    t.generateMipmaps = false;
+    if (v.requestVideoFrameCallback) {
+      var onFrame = function () { t.needsUpdate = true; v.requestVideoFrameCallback(onFrame); };
+      v.requestVideoFrameCallback(onFrame);
+    } else {
+      setInterval(function () { if (!v.paused && v.readyState >= 2) t.needsUpdate = true; }, 1000 / 24);
+    }
     return t;
   }
   function playAll() {
@@ -677,11 +686,11 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
   function frame(now) {
     requestAnimationFrame(frame);
-    var dt = Math.min((now - last) / 1000, 0.05); last = now;
+    var dt = Math.min((now - last) / 1000, 0.1); last = now;
     if (!onScreen) return;
     time += dt;
     // soft follow: the camera eases towards the scroll position instead of jumping with each wheel step
-    p += (target - p) * (reduce ? 1 : 1 - Math.exp(-dt * 3.2));
+    p += (target - p) * (reduce ? 1 : 1 - Math.exp(-dt * 6));
     sx += (mx - sx) * Math.min(1, dt * 3); sy += (my - sy) * Math.min(1, dt * 3);
 
     var spin = reduce ? 0 : 1;
