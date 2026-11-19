@@ -33,7 +33,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline
 ul { list-style: none; }
 
 /* ---------- 3D journey ---------- */
-#journey { position: relative; height: 800vh; }
+#journey { position: relative; height: 2400vh; }
 .pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 #stage, #stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #fade { position: absolute; inset: 0; background: var(--cherry); opacity: 0; pointer-events: none; }
@@ -453,7 +453,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   var CHERRY = 0x430107, DEEP = 0x240003, AMBER = 0xFECD00;
   var stage = $("stage");
   var renderer = new THREE.WebGLRenderer({ antialias: !small, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputEncoding = THREE.sRGBEncoding;
   renderer.setClearColor(DEEP, 1);
   stage.appendChild(renderer.domElement);
@@ -473,8 +473,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     return t;
   }
   function playAll() {
-    var blocked = false, pending = videos.length;
-    videos.forEach(function (v) {
+    var list = [videos[0], videos[1 + Math.max(0, typeof shown === "number" ? shown : 0)]];
+    var blocked = false, pending = list.length;
+    list.forEach(function (v) {
       var pr = v.play();
       if (pr && pr.catch) pr.catch(function () { blocked = true; }).then(function () {
         if (--pending === 0) $("play").style.display = blocked ? "block" : "none";
@@ -485,6 +486,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
   var atlasTex = makeVideo("media/atlas.mp4?v=9");
   var projTex = PROJECTS.map(function (p) { return makeVideo(p.video); });
+  var projVideos = videos.slice(1);
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
   var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide });
 
@@ -638,6 +640,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     $("next").textContent = i === N - 1 ? "See all work ↓" : "Next project →";
     Array.prototype.forEach.call(indexEl.children, function (b, k) { b.classList.toggle("on", k === i); });
     featMat.map = projTex[i]; featMat.needsUpdate = true;
+    // only the shown project's video plays; the others pause to keep the frame rate up
+    projVideos.forEach(function (v, k) { if (k === i) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } else v.pause(); });
     featT = 0;
   }
   function band(p, a, b, c, d) {
@@ -676,7 +680,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     var dt = Math.min((now - last) / 1000, 0.05); last = now;
     if (!onScreen) return;
     time += dt;
-    p += (target - p) * (reduce ? 1 : Math.min(1, dt * 4));
+    // soft follow: the camera eases towards the scroll position instead of jumping with each wheel step
+    p += (target - p) * (reduce ? 1 : 1 - Math.exp(-dt * 3.2));
     sx += (mx - sx) * Math.min(1, dt * 3); sy += (my - sy) * Math.min(1, dt * 3);
 
     var spin = reduce ? 0 : 1;
