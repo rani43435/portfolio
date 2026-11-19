@@ -535,7 +535,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
   $("play").addEventListener("click", playAll);
 
-  var atlasTex = makeVideo("media/atlas.mp4?v=10");
+  var atlasTex = makeVideo("media/atlas.mp4?v=11");
   var projTex = PROJECTS.map(function (p) { return makeVideo(p.video); });
   var projVideos = videos.slice(1);
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
@@ -618,7 +618,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
   // ---- the visitor: oversized hoodie with the hood up, wide jeans (Blender) ----
   var visitor = new THREE.Group(); visitor.position.set(0, 0, CZ); scene.add(visitor);
-  new THREE.GLTFLoader().load("media/visitor.glb?v=10", function (g) {
+  new THREE.GLTFLoader().load("media/visitor.glb?v=11", function (g) {
     var m = g.scene;
     m.rotation.y = Math.PI;      // faces the wall, back to the camera
     m.scale.setScalar(1.25);
@@ -753,14 +753,14 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     var TGT_Y = 1.5;
     tmp.set(0, TGT_Y + Math.sin(el) * rad, Math.cos(el) * rad);
     look.set(0, TGT_Y + 1.5 * swing, -6 * swing);
-    var free = 1 - swing;
+    var free = Math.max(0, 1 - swing * 2);
     tmp.x += sx * 3 * free; tmp.z += sy * 3 * free;
     if (p > ROOM0) {
       var rp = (p - ROOM0) / (ROOM1 - ROOM0);
       // camera stays put behind the visitor; only a small drift with the mouse
-      var a = Math.sin(time * 0.25) * 0.015 - sx * 0.12;
-      tmp.set(Math.sin(a) * 4.8, TGT_Y + Math.sin(9 * Math.PI / 180) * 4.8 - sy * 0.12 + Math.sin(time * 0.4) * 0.04, CZ + Math.cos(a) * 4.8);
-      look.set(sx * 0.6, TGT_Y + 2.1 - sy * 0.35, -6);
+      var a = 0;   // straight behind the visitor, no sideways movement
+      tmp.set(Math.sin(a) * 4.8, TGT_Y + Math.sin(9 * Math.PI / 180) * 4.8, CZ + Math.cos(a) * 4.8);
+      look.set(0, TGT_Y + 2.1, -6);
     }
     camera.up.set(0, 1, 0);
     camera.position.copy(tmp); camera.lookAt(look);
@@ -776,7 +776,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     feature.position.lerpVectors(FEAT_WALL, FEAT_HOME, ft);
     feature.position.y += Math.sin(time * 0.9) * 0.06 * ft;
     feature.scale.setScalar(0.35 + 0.65 * ft);
-    feature.lookAt(camera.position.x, feature.position.y, camera.position.z);
+    feature.rotation.set(0, 0, 0);   // always face straight ahead, centred over the visitor
 
     setO("o-title", band(p, -1, 0, 0.02, 0.06));
     setO("o-hint", band(p, -1, 0, 0.01, 0.03));
