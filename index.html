@@ -373,7 +373,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     </div>
   </section>
 
-  <footer><div class="wrap"><span>© 2026 Rani Marjy · 3D visitor: <a href="https://sketchfab.com/3d-models/full-body-scan-clean-pose-ae9559912f6240a8a87057911b69edd0" target="_blank" rel="noopener">“Full Body Scan - Clean Pose”</a> by OverseerThuror, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, new oversized hoodie, hood and wide jeans added</span><a href="#journey">Back to the tunnel ↑</a></div></footer>
+  <footer><div class="wrap"><span>© 2026 Rani Marjy · 3D visitor and idle animation: Mixamo</span><a href="#journey">Back to the tunnel ↑</a></div></footer>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -610,21 +610,37 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     new THREE.MeshStandardMaterial({ color: AMBER, emissive: 0xb07000, emissiveIntensity: 0.3, roughness: 0.35, fog: false }));
   sphere.position.set(0, -SPH_R, CZ); scene.add(sphere);
 
-  scene.add(new THREE.HemisphereLight(0xfff3d0, 0x430107, 0.35));
+  scene.add(new THREE.HemisphereLight(0xfff3d0, 0x430107, 0.6));
   var key = new THREE.DirectionalLight(0xfff1c4, 1.1); key.position.set(3, 6, CZ + 7); key.target.position.set(0, 1, CZ); scene.add(key, key.target);
-  var rim = new THREE.PointLight(AMBER, 2.2, 6); rim.position.set(0, 2.4, CZ - 1.3); scene.add(rim);
+  var rim = new THREE.PointLight(AMBER, 1.4, 6); rim.position.set(0, 2.4, CZ - 1.3); scene.add(rim);
   var rim2 = new THREE.PointLight(0xfff1c4, 0.7, 4); rim2.position.set(1.0, 2.0, CZ - 0.9); scene.add(rim2);
   var under = new THREE.PointLight(AMBER, 0.5, 3); under.position.set(0, 0.3, CZ + 0.6); scene.add(under);
 
   // ---- the visitor: oversized hoodie with the hood up, wide jeans (Blender) ----
   var visitor = new THREE.Group(); visitor.position.set(0, 0, CZ); scene.add(visitor);
-  new THREE.GLTFLoader().load("media/visitor.glb?v=11", function (g) {
+  // the visitor: "James" from Mixamo, playing a relaxed idle so he is never frozen
+  var mixer = null;
+  new THREE.GLTFLoader().load("media/james.glb?v=1", function (g) {
     var m = g.scene;
-    m.rotation.y = Math.PI;      // faces the wall, back to the camera
-    m.scale.setScalar(1.25);
-    // a dark figure with a soft amber rim, like the silhouette in the reel
-    m.traverse(function (o) { if (o.isMesh) { o.material = new THREE.MeshStandardMaterial({ color: 0x020101, roughness: 0.9, metalness: 0 }); } });
+    var box = new THREE.Box3().setFromObject(m), size = new THREE.Vector3(); box.getSize(size);
+    m.scale.setScalar(2.2 / size.y);                       // about 2.2 m tall in this scene
+    box.setFromObject(m); m.position.y -= box.min.y;       // feet on the sphere
+    m.rotation.y = Math.PI;                                // faces the wall, back to the camera
+    m.traverse(function (o) {
+      if (o.isMesh && o.material) {
+        o.frustumCulled = false;
+        var mats = Array.isArray(o.material) ? o.material : [o.material];
+        mats.forEach(function (mt) {
+          if (!/eyelash/i.test(mt.name)) { mt.transparent = false; mt.depthWrite = true; }
+          mt.envMapIntensity = 0;
+        });
+      }
+    });
     visitor.add(m);
+    if (g.animations && g.animations.length) {
+      mixer = new THREE.AnimationMixer(m);
+      mixer.clipAction(g.animations[0]).play();
+    }
   });
   var shadow = new THREE.Mesh(new THREE.CircleGeometry(0.75, 32),
     new THREE.MeshBasicMaterial({ color: 0x5a2a00, transparent: true, opacity: 0.45, depthWrite: false }));
@@ -739,6 +755,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     p += (target - p) * (reduce ? 1 : 1 - Math.exp(-dt * 6));
     sx += (mx - sx) * Math.min(1, dt * 3); sy += (my - sy) * Math.min(1, dt * 3);
 
+    if (mixer) mixer.update(reduce ? 0 : dt);
     var spin = reduce ? 0 : 1;
     for (var i = 0; i < rings.length; i++) rings[i].m.rotation.y += rings[i].s * dt * spin;
 
