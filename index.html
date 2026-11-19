@@ -364,7 +364,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <footer><div class="wrap"><span>© 2026 Rani Marjy · 3D visitor: <a href="https://sketchfab.com/3d-models/full-body-scan-clean-pose-ae9559912f6240a8a87057911b69edd0" target="_blank" rel="noopener">“Full Body Scan - Clean Pose”</a> by OverseerThuror, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, new oversized hoodie, hood and wide jeans added</span><a href="#journey">Back to the tunnel ↑</a></div></footer>
 </div>
 
-<script src="media/visitor-glb.js?v=7"></script>
+<script src="media/visitor-glb.js?v=8"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
@@ -456,7 +456,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
   var scene = new THREE.Scene();
   scene.fog = new THREE.Fog(DEEP, 30, 110);
-  var camera = new THREE.PerspectiveCamera(small ? 72 : 58, 1, 0.1, 400);
+  var camera = new THREE.PerspectiveCamera(small ? 78 : 64, 1, 0.1, 400);
 
   var videos = [];
   function makeVideo(src) {
@@ -479,7 +479,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
   $("play").addEventListener("click", playAll);
 
-  var atlasTex = makeVideo("media/atlas.mp4?v=7");
+  var atlasTex = makeVideo("media/atlas.mp4?v=8");
   var projTex = PROJECTS.map(function (p) { return makeVideo(p.video); });
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
   var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide });
@@ -506,26 +506,46 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
 
   // ---- one tunnel, standing upright like in the reel ----
-  // Rows of screens stacked into a tall shaft. You start above it looking straight down at the
-  // amber sphere at the bottom, fly down the shaft, and land behind the visitor standing on the
-  // sphere: the same tunnel's walls are now the curved wall of screens around him.
-  var CZ = 0, SPH_R = 8.2;
-  var TR = 10, TPER = 20, ROW_H = 1.75, ROW_GAP = 0.25, TROWS = 30, ROW_Y0 = 0.3;
+  // Rings of curved screens stacked into a shaft. You start just above it looking straight down
+  // at the sphere at the bottom, fly down, and land behind the visitor on top of the sphere;
+  // the shaft's own walls are the wall of screens around him.
+  var CZ = 0, SPH_R = 8.4;
+  var TR = 9, TPER = 16, ROW_H = 2.15, ROW_GAP = 0.28, TROWS = 15, ROW_Y0 = 0.2;
   var SHAFT_TOP = ROW_Y0 + TROWS * (ROW_H + ROW_GAP);
+  var SEG = 6;  // each screen is bent along the wall
+  function ringGeometry(tiles, phase) {
+    var pos = [], uv = [], idx = [], n = 0, step = 2 * Math.PI / TPER, fill = 0.92;
+    for (var k = 0; k < TPER; k++) {
+      var a0 = (k + phase) * step - step * fill / 2, tile = tiles[k];
+      var col = tile % 4, row = Math.floor(tile / 4);
+      var u0 = col / 4 + 0.002, u1 = (col + 1) / 4 - 0.002, v1 = 1 - row / 4 - 0.002, v0 = 1 - (row + 1) / 4 + 0.002;
+      for (var sI = 0; sI <= SEG; sI++) {
+        // seen from inside, screen left is at the larger angle
+        var a = a0 + step * fill * (1 - sI / SEG), u = u0 + (u1 - u0) * sI / SEG;
+        var x = Math.sin(a) * TR, z = Math.cos(a) * TR;
+        pos.push(x, -ROW_H / 2, z, x, ROW_H / 2, z); uv.push(u, v0, u, v1);
+      }
+      for (var q = 0; q < SEG; q++) {
+        var b = n + q * 2;
+        idx.push(b, b + 2, b + 3, b, b + 3, b + 1);
+      }
+      n += (SEG + 1) * 2;
+    }
+    var g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+    g.setAttribute("uv", new THREE.Float32BufferAttribute(uv, 2));
+    g.setIndex(idx);
+    return g;
+  }
   var tunnel = new THREE.Group(); scene.add(tunnel);
   var rings = [];
   for (var j = 0; j < TROWS; j++) {
-    var list = [], arc = 2 * Math.PI * TR / TPER;
-    for (var k = 0; k < TPER; k++) {
-      var ph = (k + (j % 2) * 0.5) * 2 * Math.PI / TPER;
-      var c = new THREE.Vector3(Math.sin(ph) * TR, 0, Math.cos(ph) * TR);
-      list.push({ c: c, r: new THREE.Vector3(-Math.cos(ph), 0, Math.sin(ph)), u: new THREE.Vector3(0, 1, 0), w: arc * 0.9, h: ROW_H, tile: Math.floor(rnd() * 16) });
-    }
-    var ring = new THREE.Mesh(quads(list), tunnelMat);
+    var tiles = []; for (var k = 0; k < TPER; k++) tiles.push(Math.floor(rnd() * 16));
+    var ring = new THREE.Mesh(ringGeometry(tiles, (j % 2) * 0.5), tunnelMat);
     ring.position.y = ROW_Y0 + j * (ROW_H + ROW_GAP) + ROW_H / 2;
-    ring.rotation.y = rnd() * Math.PI;
+    ring.rotation.y = rnd() * Math.PI * 2;
     tunnel.add(ring);
-    rings.push({ m: ring, s: (0.04 + rnd() * 0.06) * (j % 2 ? -1 : 1) });
+    rings.push({ m: ring, s: (0.05 + rnd() * 0.06) * (j % 2 ? -1 : 1) });
   }
 
   // ---- amber sphere at the bottom of the shaft, its top is the floor ----
@@ -533,7 +553,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     new THREE.MeshStandardMaterial({ color: AMBER, emissive: 0xb07000, emissiveIntensity: 0.3, roughness: 0.35, fog: false }));
   sphere.position.set(0, -SPH_R, CZ); scene.add(sphere);
 
-  scene.add(new THREE.HemisphereLight(0xfff3d0, 0x430107, 0.55));
+  scene.add(new THREE.HemisphereLight(0xfff3d0, 0x430107, 0.35));
   var key = new THREE.DirectionalLight(0xfff1c4, 1.1); key.position.set(3, 6, CZ + 7); key.target.position.set(0, 1, CZ); scene.add(key, key.target);
   var rim = new THREE.PointLight(AMBER, 1.6, 10); rim.position.set(0, 2.8, CZ - 3); scene.add(rim);
   var under = new THREE.PointLight(AMBER, 1.0, 6); under.position.set(0, 0.3, CZ + 0.6); scene.add(under);
@@ -553,7 +573,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   scene.add(shadow);
 
   // ---- the screen taken off the wall ----
-  var FW = small ? 3.6 : 4.8, FH = FW * 0.625;
+  var FW = small ? 3.8 : 4.6, FH = FW * 0.625;
   var feature = new THREE.Group();
   var featMat = new THREE.MeshBasicMaterial({ map: projTex[0], side: THREE.DoubleSide, fog: false });
   var featRim = new THREE.Mesh(new THREE.PlaneGeometry(FW + 0.14, FH + 0.14), new THREE.MeshBasicMaterial({ color: AMBER, side: THREE.DoubleSide, fog: false }));
@@ -561,17 +581,18 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   feature.add(featRim, new THREE.Mesh(new THREE.PlaneGeometry(FW, FH), featMat));
   feature.visible = false;
   scene.add(feature);
-  var FEAT_HOME = new THREE.Vector3(0, 3.0, CZ - 3.2);
-  var FEAT_WALL = new THREE.Vector3(0, ROW_Y0 + 2 * (ROW_H + ROW_GAP) + ROW_H / 2, CZ - TR + 0.3);
+  // above the visitor's head, like the reel
+  var FEAT_HOME = new THREE.Vector3(0, 3.55, CZ - 2.2);
+  var FEAT_WALL = new THREE.Vector3(0, ROW_Y0 + 1 * (ROW_H + ROW_GAP) + ROW_H / 2, CZ - TR + 0.3);
 
-  // ---- camera path: above the shaft looking down, then down to just behind the visitor ----
+  // ---- camera path: just above the shaft looking down, down onto the visitor, then low behind him ----
   var camPath = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, SHAFT_TOP + 26, 0.01), new THREE.Vector3(0, SHAFT_TOP * 0.55, 0.3),
-    new THREE.Vector3(0, 14, 1.2), new THREE.Vector3(0, 6.5, 4.5), new THREE.Vector3(0, 2.4, 5.6)
+    new THREE.Vector3(0, SHAFT_TOP + 7, 0.01), new THREE.Vector3(0, SHAFT_TOP * 0.45, 0.2),
+    new THREE.Vector3(0, 9, 1.0), new THREE.Vector3(0, 4.2, 4.0), new THREE.Vector3(0, 1.55, 4.6)
   ], false, "centripetal");
   var lookPath = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -0.2),
-    new THREE.Vector3(0, 0.5, -1.5), new THREE.Vector3(0, 1.6, -4), new THREE.Vector3(0, 2.3, -7)
+    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0.5, -0.1),
+    new THREE.Vector3(0, 1.0, -0.8), new THREE.Vector3(0, 1.8, -3), new THREE.Vector3(0, 3.0, -6)
   ], false, "centripetal");
   var UP_DOWN = new THREE.Vector3(0, 0, -1), UP_Y = new THREE.Vector3(0, 1, 0);
 
@@ -666,8 +687,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     if (p > ROOM0) {
       var rp = (p - ROOM0) / (ROOM1 - ROOM0);
       var a = (rp - 0.5) * 0.7 + Math.sin(time * 0.25) * 0.03 - sx * 0.45;
-      tmp.set(Math.sin(a) * 5.6, 2.4 - sy * 0.4 + Math.sin(time * 0.4) * 0.05, CZ + Math.cos(a) * 5.6);
-      look.set(sx * 1.5, 2.3 - sy * 0.8, -7);
+      tmp.set(Math.sin(a) * 4.6, 1.55 - sy * 0.3 + Math.sin(time * 0.4) * 0.04, CZ + Math.cos(a) * 4.6);
+      look.set(sx * 1.5, 3.0 - sy * 0.8, -6);
     }
     // camera "up" turns from pointing along the shaft floor (looking down) to world up (looking ahead)
     camera.up.copy(UP_DOWN).lerp(UP_Y, clamp01((f - 0.45) / 0.4)).normalize();
