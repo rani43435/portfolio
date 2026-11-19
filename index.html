@@ -620,7 +620,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   var visitor = new THREE.Group(); visitor.position.set(0, 0, CZ); scene.add(visitor);
   // the visitor: "James" from Mixamo, playing a relaxed idle so he is never frozen
   var mixer = null;
-  new THREE.GLTFLoader().load("media/james.glb?v=1", function (g) {
+  new THREE.GLTFLoader().load("media/james.glb?v=2", function (g) {
     var m = g.scene;
     var box = new THREE.Box3().setFromObject(m), size = new THREE.Vector3(); box.getSize(size);
     m.scale.setScalar(2.2 / size.y);                       // about 2.2 m tall in this scene
