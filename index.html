@@ -41,11 +41,11 @@ ul { list-style: none; }
 .ui a, .ui button { pointer-events: auto; }
 [data-o] { opacity: 0; transition: opacity 0.25s linear; }
 
-.brand { top: 20px; left: 24px; font-size: 14px; font-weight: 700; }
+.brand { top: 16px; left: 16px; font-size: 14px; font-weight: 700; padding: 10px 14px; border-radius: 12px; background: rgba(36, 0, 3, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .brand span { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
-.index { top: 20px; right: 24px; text-align: right; font-size: 13px; line-height: 1.8; }
+.index { top: 16px; right: 16px; text-align: right; font-size: 13px; line-height: 1.8; padding: 10px 14px; border-radius: 12px; background: rgba(36, 0, 3, 0.6); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .index p { color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; font-size: 11px; }
-.index button { display: block; margin-left: auto; background: none; border: 0; color: var(--muted); font: inherit; cursor: pointer; }
+.index button { display: block; margin-left: auto; background: none; border: 0; color: var(--powder); font: inherit; cursor: pointer; }
 .index button:hover, .index button.on { color: var(--amber); }
 
 .title { inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 24px; }
@@ -364,7 +364,6 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   <footer><div class="wrap"><span>© 2026 Rani Marjy · 3D visitor: <a href="https://sketchfab.com/3d-models/full-body-scan-clean-pose-ae9559912f6240a8a87057911b69edd0" target="_blank" rel="noopener">“Full Body Scan - Clean Pose”</a> by OverseerThuror, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, new oversized hoodie, hood and wide jeans added</span><a href="#journey">Back to the tunnel ↑</a></div></footer>
 </div>
 
-<script src="media/visitor-glb.js?v=8"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
@@ -479,7 +478,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
   $("play").addEventListener("click", playAll);
 
-  var atlasTex = makeVideo("media/atlas.mp4?v=8");
+  var atlasTex = makeVideo("media/atlas.mp4?v=9");
   var projTex = PROJECTS.map(function (p) { return makeVideo(p.video); });
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
   var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide });
@@ -560,7 +559,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
   // ---- the visitor: oversized hoodie with the hood up, wide jeans (Blender) ----
   var visitor = new THREE.Group(); visitor.position.set(0, 0, CZ); scene.add(visitor);
-  if (window.VISITOR_GLB) new THREE.GLTFLoader().load(window.VISITOR_GLB, function (g) {
+  new THREE.GLTFLoader().load("media/visitor.glb?v=9", function (g) {
     var m = g.scene;
     m.rotation.y = Math.PI;      // faces the wall, back to the camera
     m.scale.setScalar(1.25);
@@ -713,7 +712,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     setO("o-cap2", band(p, 0.15, 0.19, 0.25, 0.28));
     setO("o-project", band(p, ROOM0 - 0.01, ROOM0 + 0.01, ROOM1 - 0.005, ROOM1 + 0.01));
     setO("o-nav", band(p, ROOM0 - 0.01, ROOM0 + 0.01, ROOM1, ROOM1 + 0.02));
-    document.querySelector(".index").style.opacity = inRoom ? 1 : 0.55;
+    
 
     renderer.render(scene, camera);
   }
