@@ -151,7 +151,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline
 
 <div class="ui outro" data-o id="o-outro">
   <h2>Your project, next on the wall.</h2>
-  <p>I am a self-taught VR and AR developer in Münster, Germany, starting AVRD at Hochschule Darmstadt. I build for Meta Quest, smart glasses and the web.</p>
   <div class="links">
     <a class="step" href="mailto:marjyrany@gmail.com">Email me →</a>
     <a class="tab" href="https://github.com/rani43435" target="_blank" rel="noopener">GitHub ↗</a>
@@ -433,6 +432,9 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline
 
   // ---------- Loop ----------
   var target = 0, p = 0, featT = 1, last = performance.now(), time = 0;
+  var mx = 0, my = 0, sx = 0, sy = 0; // mouse, -1..1, and its smoothed value
+  addEventListener("pointermove", function (e) { if (e.pointerType === "touch") return; mx = e.clientX / innerWidth * 2 - 1; my = e.clientY / innerHeight * 2 - 1; });
+  document.addEventListener("mouseleave", function () { mx = 0; my = 0; });
   function readScroll() {
     var max = document.documentElement.scrollHeight - innerHeight;
     target = max > 0 ? Math.min(Math.max(scrollY / max, 0), 1) : 0;
@@ -445,6 +447,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline
   function frame(now) {
     var dt = Math.min((now - last) / 1000, 0.05); last = now; time += dt;
     p += (target - p) * (reduce ? 1 : Math.min(1, dt * 4));
+    sx += (mx - sx) * Math.min(1, dt * 3); sy += (my - sy) * Math.min(1, dt * 3);
 
     // tunnel rings and room wall keep turning on their own
     var spin = reduce ? 0 : 1;
@@ -456,17 +459,22 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline
     if (!outro) {
       var f = ease(Math.min(Math.max((p - FLY0) / (FLY1 - FLY0), 0), 1));
       camPath.getPoint(f, tmp); lookPath.getPoint(f, look);
+      var free = 1 - f * 0.6;
+      tmp.x += sx * 2.2 * free; tmp.y -= sy * 1.6 * free;
+      look.x += sx * 9 * free; look.y -= sy * 6 * free;
       if (p > ROOM0) { // gentle orbit around the visitor, one stop per project
         var rp = (p - ROOM0) / (ROOM1 - ROOM0);
-        var a = (rp - 0.5) * 0.7 + Math.sin(time * 0.25) * 0.03;
-        tmp.set(Math.sin(a) * 5.6, 2.5 + Math.sin(time * 0.4) * 0.05, CZ + Math.cos(a) * 5.6);
+        var a = (rp - 0.5) * 0.7 + Math.sin(time * 0.25) * 0.03 - sx * 0.4;
+        tmp.set(Math.sin(a) * 5.6, 2.5 - sy * 0.45 + Math.sin(time * 0.4) * 0.05, CZ + Math.cos(a) * 5.6);
+        look.x += sx * 1.2; look.y -= sy * 0.6;
       }
       camera.position.copy(tmp);
       camera.lookAt(look);
     } else { // pull back out: the tunnel seen from far away
       var o = ease(Math.min((p - OUT0) / (1 - OUT0), 1));
       camera.position.set(0, TY, 12 + 40 * o);
-      camera.lookAt(0, TY, -40);
+      camera.position.x += sx * 3; camera.position.y -= sy * 2;
+      camera.lookAt(sx * 6, TY - sy * 4, -40);
     }
 
     // dip to dark between the room and the outro
