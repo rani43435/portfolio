@@ -10,7 +10,7 @@
 <style>
 /* Palette: Midnight Cherry, Powder White, Amber Yellow.
    Layout: a pinned 3D journey (one tunnel of turning project screens, down to the amber
-   sphere, into the room where each project steps off the wall), then a normal
+   sphere at its end; standing on it, each project steps off the tunnel wall), then a normal
    portfolio site underneath: work with categories, what I do, about, stack, contact. */
 :root {
   --cherry: #430107;
@@ -33,7 +33,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline
 ul { list-style: none; }
 
 /* ---------- 3D journey ---------- */
-#journey { position: relative; height: 900vh; }
+#journey { position: relative; height: 800vh; }
 .pin { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
 #stage, #stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 #fade { position: absolute; inset: 0; background: var(--cherry); opacity: 0; pointer-events: none; }
@@ -361,7 +361,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     </div>
   </section>
 
-  <footer><div class="wrap"><span>© 2026 Rani Marjy · 3D visitor: <a href="https://sketchfab.com/3d-models/full-body-scan-clean-pose-ae9559912f6240a8a87057911b69edd0" target="_blank" rel="noopener">“Full Body Scan - Clean Pose”</a> by OverseerThuror, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, hood added</span><a href="#journey">Back to the tunnel ↑</a></div></footer>
+  <footer><div class="wrap"><span>© 2026 Rani Marjy · 3D visitor: <a href="https://sketchfab.com/3d-models/full-body-scan-clean-pose-ae9559912f6240a8a87057911b69edd0" target="_blank" rel="noopener">“Full Body Scan - Clean Pose”</a> by OverseerThuror, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>, new oversized hoodie, hood and wide jeans added</span><a href="#journey">Back to the tunnel ↑</a></div></footer>
 </div>
 
 <script src="media/visitor-glb.js"></script>
@@ -444,7 +444,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
 
   // ================= 3D journey =================
-  var FLY0 = 0.03, FLY1 = 0.34, ROOM0 = 0.36, ROOM1 = 0.93;
+  var FLY0 = 0.03, FLY1 = 0.27, ROOM0 = 0.29, ROOM1 = 0.93;
 
   var CHERRY = 0x430107, DEEP = 0x240003, AMBER = 0xFECD00;
   var stage = $("stage");
@@ -482,8 +482,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   var atlasTex = makeVideo("media/atlas.mp4");
   var projTex = PROJECTS.map(function (p) { return makeVideo(p.video); });
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
-  var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide, transparent: true });
-  var roomMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide, transparent: true, opacity: 0 });
+  var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide });
 
   function quads(list) {
     var pos = [], uv = [], idx = [], n = 0;
@@ -507,8 +506,11 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   function rnd() { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }
 
   // ---- the one tunnel ----
-  var CZ = -78, SPH_R = 9, TY = -SPH_R;
-  var TR = 6, TPER = 12, TGAP = 2.05, TRINGS = 30;
+  // one shorter tunnel; the sphere sits inside it near the end and the visitor stands on top,
+  // so the same tunnel of screens surrounds you when you look at the projects
+  var SPH_R = 4.5, TY = -SPH_R;
+  var TR = 9, TPER = 16, TGAP = 2.4, RINGS_BEFORE = 13, TRINGS = 21;
+  var CZ = -RINGS_BEFORE * TGAP;
   var tunnel = new THREE.Group(); tunnel.position.y = TY; scene.add(tunnel);
   var rings = [];
   for (var j = 0; j < TRINGS; j++) {
@@ -525,18 +527,6 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
   var TUNNEL_END = -(TRINGS - 1) * TGAP;
 
-  // ---- the room at the end (only shown once you are through the tunnel) ----
-  var RR = 15, RCOLS = 30, RROWS = 6, RH = 1.75, RY0 = 0.6;
-  var roomList = [], rArc = 2 * Math.PI * RR / RCOLS;
-  for (var row = 0; row < RROWS; row++) for (var col = 0; col < RCOLS; col++) {
-    var ph = (col + (row % 2) * 0.5) * 2 * Math.PI / RCOLS;
-    var dir = new THREE.Vector3(Math.sin(ph), 0, Math.cos(ph));
-    var c = dir.clone().multiplyScalar(RR); c.y = RY0 + row * (RH + 0.22) + RH / 2;
-    roomList.push({ c: c, r: new THREE.Vector3(-Math.cos(ph), 0, Math.sin(ph)), u: new THREE.Vector3(0, 1, 0), w: rArc * 0.9, h: RH, tile: Math.floor(rnd() * 16) });
-  }
-  var room = new THREE.Mesh(quads(roomList), roomMat);
-  room.position.set(0, 0, CZ); room.visible = false;
-  scene.add(room);
 
   // ---- amber sphere, its top is the floor ----
   var sphere = new THREE.Mesh(new THREE.SphereGeometry(SPH_R, 96, 64),
@@ -550,11 +540,11 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     return new THREE.CanvasTexture(cv);
   })();
   var halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, fog: false }));
-  halo.scale.set(34, 34, 1); halo.position.copy(sphere.position); scene.add(halo);
+  halo.scale.set(16, 16, 1); halo.position.copy(sphere.position); scene.add(halo);
 
   scene.add(new THREE.HemisphereLight(0xfff3d0, 0x430107, 0.55));
-  var key = new THREE.DirectionalLight(0xfff1c4, 1.1); key.position.set(3, 8, CZ + 7); key.target.position.set(0, 1, CZ); scene.add(key, key.target);
-  var rim = new THREE.PointLight(AMBER, 1.6, 10); rim.position.set(0, 3.5, CZ - 3.5); scene.add(rim);
+  var key = new THREE.DirectionalLight(0xfff1c4, 1.1); key.position.set(3, 4, CZ + 7); key.target.position.set(0, 1, CZ); scene.add(key, key.target);
+  var rim = new THREE.PointLight(AMBER, 1.6, 10); rim.position.set(0, 2.6, CZ - 3.2); scene.add(rim);
   var under = new THREE.PointLight(AMBER, 1.0, 6); under.position.set(0, 0.3, CZ + 0.6); scene.add(under);
 
   // ---- the visitor: hoodie with the hood up, wide blue jeans (modelled in Blender) ----
@@ -563,7 +553,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     var m = g.scene;
     m.rotation.y = Math.PI;      // faces the wall, back to the camera
     m.scale.setScalar(1.25);
-    m.traverse(function (o) { if (o.isMesh && o.material) { o.material.envMapIntensity = 0; if (o.material.name === "HoodFabric") o.material.color.setHex(0x140b38); } });
+    m.traverse(function (o) { if (o.isMesh && o.material) { o.material.envMapIntensity = 0; if (o.material.name === "Hoodie") o.material.roughness = 0.95; if (o.material.name === "Jeans") o.material.roughness = 0.9; } });
     visitor.add(m);
   });
   var shadow = new THREE.Mesh(new THREE.CircleGeometry(0.75, 32),
@@ -572,7 +562,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   scene.add(shadow);
 
   // ---- the screen taken off the wall ----
-  var FW = small ? 4.2 : 5.2, FH = FW * 0.625;
+  var FW = small ? 3.6 : 4.8, FH = FW * 0.625;
   var feature = new THREE.Group();
   var featMat = new THREE.MeshBasicMaterial({ map: projTex[0], side: THREE.DoubleSide, fog: false });
   var featRim = new THREE.Mesh(new THREE.PlaneGeometry(FW + 0.14, FH + 0.14), new THREE.MeshBasicMaterial({ color: AMBER, side: THREE.DoubleSide, fog: false }));
@@ -580,17 +570,17 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   feature.add(featRim, new THREE.Mesh(new THREE.PlaneGeometry(FW, FH), featMat));
   feature.visible = false;
   scene.add(feature);
-  var FEAT_HOME = new THREE.Vector3(0, 3.55, CZ - 4.6);
-  var FEAT_WALL = new THREE.Vector3(0, RY0 + 2 * (RH + 0.22) + RH / 2, CZ - RR + 0.3);
+  var FEAT_HOME = new THREE.Vector3(0, 2.75, CZ - 2.4);
+  var FEAT_WALL = new THREE.Vector3(0, TY + TR - 1.0, CZ - 10);   // a screen up on the tunnel wall ahead
 
   // ---- camera path ----
   var camPath = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, TY, 12), new THREE.Vector3(0, TY, -20), new THREE.Vector3(0, TY + 0.5, TUNNEL_END + 2),
-    new THREE.Vector3(0, -1.5, CZ + 17), new THREE.Vector3(0, 3.5, CZ + 9), new THREE.Vector3(0, 2.5, CZ + 5.6)
+    new THREE.Vector3(0, TY, 12), new THREE.Vector3(0, TY, -6), new THREE.Vector3(0, TY + 0.5, CZ + 13),
+    new THREE.Vector3(0, 0.6, CZ + 9), new THREE.Vector3(0, 2.6, CZ + 6.6), new THREE.Vector3(0, 2.2, CZ + 5.4)
   ], false, "centripetal");
   var lookPath = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(0, TY, -40), new THREE.Vector3(0, TY, CZ), new THREE.Vector3(0, TY + 1, CZ),
-    new THREE.Vector3(0, 0, CZ), new THREE.Vector3(0, 2, CZ - 4), new THREE.Vector3(0, 2.6, CZ - 6)
+    new THREE.Vector3(0, TY, -40), new THREE.Vector3(0, TY, CZ), new THREE.Vector3(0, TY + 1.5, CZ),
+    new THREE.Vector3(0, 0.5, CZ - 2), new THREE.Vector3(0, 1.8, CZ - 5), new THREE.Vector3(0, 2.1, CZ - 7)
   ], false, "centripetal");
 
   // ---- UI ----
@@ -674,14 +664,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
     var spin = reduce ? 0 : 1;
     for (var i = 0; i < rings.length; i++) rings[i].m.rotation.z += rings[i].s * dt * spin;
-    room.rotation.y += 0.018 * dt * spin;
 
     var f = ease(clamp01((p - FLY0) / (FLY1 - FLY0)));
-    // one tunnel at a time: the tunnel fades as you come out of it, then the room fades in
-    var tunnelA = 1 - clamp01((f - 0.66) / 0.14);
-    var roomA = clamp01((f - 0.74) / 0.16);
-    tunnelMat.opacity = tunnelA; tunnel.visible = tunnelA > 0.01;
-    roomMat.opacity = roomA; room.visible = roomA > 0.01;
 
     camPath.getPoint(f, tmp); lookPath.getPoint(f, look);
     var free = 1 - f * 0.6;
@@ -690,7 +674,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     if (p > ROOM0) {
       var rp = (p - ROOM0) / (ROOM1 - ROOM0);
       var a = (rp - 0.5) * 0.7 + Math.sin(time * 0.25) * 0.03 - sx * 0.4;
-      tmp.set(Math.sin(a) * 5.6, 2.5 - sy * 0.45 + Math.sin(time * 0.4) * 0.05, CZ + Math.cos(a) * 5.6);
+      tmp.set(Math.sin(a) * 5.4, 2.2 - sy * 0.35 + Math.sin(time * 0.4) * 0.05, CZ + Math.cos(a) * 5.4);
       look.x += sx * 1.2; look.y -= sy * 0.6;
     }
     camera.position.copy(tmp); camera.lookAt(look);
@@ -710,8 +694,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
     setO("o-title", band(p, -1, 0, 0.02, 0.06));
     setO("o-hint", band(p, -1, 0, 0.01, 0.03));
-    setO("o-cap1", band(p, 0.0, 0.015, 0.11, 0.16));
-    setO("o-cap2", band(p, 0.19, 0.24, 0.31, 0.35));
+    setO("o-cap1", band(p, 0.0, 0.015, 0.09, 0.13));
+    setO("o-cap2", band(p, 0.15, 0.19, 0.25, 0.28));
     setO("o-project", band(p, ROOM0 - 0.01, ROOM0 + 0.01, ROOM1 - 0.005, ROOM1 + 0.01));
     setO("o-nav", band(p, ROOM0 - 0.01, ROOM0 + 0.01, ROOM1, ROOM1 + 0.02));
     document.querySelector(".index").style.opacity = inRoom ? 1 : 0.55;
