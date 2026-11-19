@@ -228,7 +228,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     </div>
     <div class="ui caption" data-o id="o-cap2">
       Take one off the wall.
-      <small>At the end of the tunnel, each project steps out to meet you.</small>
+      <small>Click any screen on the wall to bring that project out.</small>
     </div>
 
     <div class="ui project" data-o id="o-project" aria-live="polite">
@@ -755,9 +755,10 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     tmp.x += sx * 3 * free; tmp.z += sy * 3 * free;
     if (p > ROOM0) {
       var rp = (p - ROOM0) / (ROOM1 - ROOM0);
-      var a = (rp - 0.5) * 0.6 + Math.sin(time * 0.25) * 0.03 - sx * 0.45;
-      tmp.set(Math.sin(a) * 4.8, TGT_Y + Math.sin(9 * Math.PI / 180) * 4.8 - sy * 0.3 + Math.sin(time * 0.4) * 0.04, CZ + Math.cos(a) * 4.8);
-      look.set(sx * 1.5, TGT_Y + 1.5 - sy * 0.8, -6);
+      // camera stays put behind the visitor; only a small drift with the mouse
+      var a = Math.sin(time * 0.25) * 0.015 - sx * 0.12;
+      tmp.set(Math.sin(a) * 4.8, TGT_Y + Math.sin(9 * Math.PI / 180) * 4.8 - sy * 0.12 + Math.sin(time * 0.4) * 0.04, CZ + Math.cos(a) * 4.8);
+      look.set(sx * 0.6, TGT_Y + 1.5 - sy * 0.35, -6);
     }
     camera.up.set(0, 1, 0);
     camera.position.copy(tmp); camera.lookAt(look);
@@ -785,6 +786,28 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
     renderer.render(scene, camera);
   }
+  // "Take one off the wall": click any screen on the wall to bring that project out
+  var TILE_PROJECT = [0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4]; // atlas tile -> project
+  var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+  function wallHit(e) {
+    var r = renderer.domElement.getBoundingClientRect();
+    ndc.set((e.clientX - r.left) / r.width * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    var hits = ray.intersectObjects(tunnel.children, false);
+    if (!hits.length || !hits[0].uv) return -1;
+    var uv = hits[0].uv, col = Math.min(3, Math.floor(uv.x * 4)), row = Math.min(3, Math.floor((1 - uv.y) * 4));
+    return TILE_PROJECT[row * 4 + col];
+  }
+  stage.parentNode.addEventListener("click", function (e) {
+    if (e.target.closest("a, button")) return;
+    var i = wallHit(e);
+    if (i >= 0) go(pToY(projP(i)));
+  });
+  stage.parentNode.addEventListener("mousemove", function (e) {
+    if (e.target.closest("a, button")) return;
+    stage.style.cursor = wallHit(e) >= 0 ? "pointer" : "";
+  });
+
   playAll();
   requestAnimationFrame(frame);
 })();
