@@ -368,6 +368,11 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script>
 (function () {
+  // Always open at the top of the tunnel: no restored scroll position, no old #anchor from a previous visit
+  try { history.scrollRestoration = "manual"; } catch (e) {}
+  if (location.hash) history.replaceState(null, "", location.pathname + location.search);
+  window.scrollTo(0, 0);
+  addEventListener("load", function () { window.scrollTo(0, 0); });
   var PROJECTS = [
     { name: "Harley", what: "An AI companion that lives in your room.",
       long: "A mixed reality companion for Meta Quest 3 and 3S. Say “Hey Harley” and she answers, sees what you see, teaches you words using the objects in your room, and gets things done on your computer.",
