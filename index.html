@@ -157,6 +157,15 @@ section.block { padding: 100px 0; border-top: 1px solid var(--line); }
 footer { border-top: 1px solid var(--line); padding: 26px 0; font-size: 13px; color: var(--muted); }
 footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 
+
+.sim { display: grid; grid-template-columns: 1.4fr 1fr; gap: 22px; align-items: start; }
+.sim video { width: 100%; border-radius: 14px; border: 1px solid var(--line); display: block; background: #000; }
+.sim-shots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sim-shots figure { margin: 0; }
+.sim-shots img { width: 100%; border-radius: 10px; border: 1px solid var(--line); display: block; }
+.sim-shots figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.sim-text p { color: var(--muted); font-size: 16px; max-width: 60ch; margin-bottom: 14px; }
+@media (max-width: 900px) { .sim { grid-template-columns: 1fr; } }
 @media (max-width: 900px) {
   .grid { grid-template-columns: 1fr; }
   .card.wide { grid-column: auto; }
@@ -274,6 +283,28 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       </div>
       <div class="grid" id="grid"></div>
       <p class="empty" id="empty">No projects in this category yet.</p>
+    </div>
+  </section>
+
+  <section class="block" id="glance-sim">
+    <div class="wrap">
+      <div class="head"><div><p class="eyebrow">Glance Pay · tested on the simulator</p><h3>How it looks on the glasses</h3></div>
+        <a class="btn ghost" href="https://rani43435.github.io/glancepay/" target="_blank" rel="noopener">Open Glance Pay ↗</a></div>
+      <div class="sim">
+        <div>
+          <video src="media/glance-simulator.mp4" controls muted playsinline preload="metadata" poster="media/sim-cafe-confirm.jpg"></video>
+          <div class="sim-text" style="margin-top:18px">
+            <p>Recorded in the Meta Ray-Ban Display simulator over four backgrounds: a bridge, a café, a train station at night and the bare display.</p>
+            <p>Press the card to switch between Visa and Mastercard. Scan to pay opens the camera and finds the shop's code. The amount appears; tilt your head right to pay, or press Pay. Every payment lands in History, kept on the glasses.</p>
+          </div>
+        </div>
+        <div class="sim-shots">
+          <figure><img src="media/sim-bridge-visa.jpg" alt="Glance Pay home screen over a bridge" loading="lazy"><figcaption>Home · outdoors</figcaption></figure>
+          <figure><img src="media/sim-cafe-confirm.jpg" alt="Payment of 3,80 euros to Demo Café over a café" loading="lazy"><figcaption>Confirm · café</figcaption></figure>
+          <figure><img src="media/sim-station-history.jpg" alt="Payment history over a train station at night" loading="lazy"><figcaption>History · night</figcaption></figure>
+          <figure><img src="media/sim-dark-confirm.jpg" alt="Confirm screen on the bare display" loading="lazy"><figcaption>Display only</figcaption></figure>
+        </div>
+      </div>
     </div>
   </section>
 
