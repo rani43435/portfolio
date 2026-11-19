@@ -612,8 +612,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
   scene.add(new THREE.HemisphereLight(0xfff3d0, 0x430107, 0.35));
   var key = new THREE.DirectionalLight(0xfff1c4, 1.1); key.position.set(3, 6, CZ + 7); key.target.position.set(0, 1, CZ); scene.add(key, key.target);
-  var rim = new THREE.PointLight(AMBER, 1.6, 10); rim.position.set(0, 2.8, CZ - 3); scene.add(rim);
-  var under = new THREE.PointLight(AMBER, 1.0, 6); under.position.set(0, 0.3, CZ + 0.6); scene.add(under);
+  var rim = new THREE.PointLight(AMBER, 2.2, 6); rim.position.set(0, 2.4, CZ - 1.3); scene.add(rim);
+  var rim2 = new THREE.PointLight(0xfff1c4, 0.7, 4); rim2.position.set(1.0, 2.0, CZ - 0.9); scene.add(rim2);
+  var under = new THREE.PointLight(AMBER, 0.5, 3); under.position.set(0, 0.3, CZ + 0.6); scene.add(under);
 
   // ---- the visitor: oversized hoodie with the hood up, wide jeans (Blender) ----
   var visitor = new THREE.Group(); visitor.position.set(0, 0, CZ); scene.add(visitor);
@@ -621,7 +622,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     var m = g.scene;
     m.rotation.y = Math.PI;      // faces the wall, back to the camera
     m.scale.setScalar(1.25);
-    m.traverse(function (o) { if (o.isMesh && o.material) { o.material.envMapIntensity = 0; } });
+    // a dark figure with a soft amber rim, like the silhouette in the reel
+    m.traverse(function (o) { if (o.isMesh) { o.material = new THREE.MeshStandardMaterial({ color: 0x020101, roughness: 0.9, metalness: 0 }); } });
     visitor.add(m);
   });
   var shadow = new THREE.Mesh(new THREE.CircleGeometry(0.75, 32),
@@ -630,7 +632,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   scene.add(shadow);
 
   // ---- the screen taken off the wall ----
-  var FW = small ? 3.8 : 4.6, FH = FW * 0.625;
+  var FW = small ? 4.4 : 5.6, FH = FW * 0.625;
   var feature = new THREE.Group();
   var featMat = new THREE.MeshBasicMaterial({ map: projTex[0], side: THREE.DoubleSide, fog: false });
   var featRim = new THREE.Mesh(new THREE.PlaneGeometry(FW + 0.14, FH + 0.14), new THREE.MeshBasicMaterial({ color: AMBER, side: THREE.DoubleSide, fog: false }));
@@ -639,7 +641,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   feature.visible = false;
   scene.add(feature);
   // above the visitor's head, like the reel
-  var FEAT_HOME = new THREE.Vector3(0, 3.55, CZ - 2.2);
+  var FEAT_HOME = new THREE.Vector3(0, 4.5, CZ - 2.6);
   var FEAT_WALL = new THREE.Vector3(0, ROW_Y0 + 1 * (ROW_H + ROW_GAP) + ROW_H / 2, CZ - TR + 0.3);
 
   // ---- camera path: just above the shaft looking down, down onto the visitor, then low behind him ----
@@ -758,7 +760,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       // camera stays put behind the visitor; only a small drift with the mouse
       var a = Math.sin(time * 0.25) * 0.015 - sx * 0.12;
       tmp.set(Math.sin(a) * 4.8, TGT_Y + Math.sin(9 * Math.PI / 180) * 4.8 - sy * 0.12 + Math.sin(time * 0.4) * 0.04, CZ + Math.cos(a) * 4.8);
-      look.set(sx * 0.6, TGT_Y + 1.5 - sy * 0.35, -6);
+      look.set(sx * 0.6, TGT_Y + 2.1 - sy * 0.35, -6);
     }
     camera.up.set(0, 1, 0);
     camera.position.copy(tmp); camera.lookAt(look);
