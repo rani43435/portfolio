@@ -166,6 +166,16 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 .sim-shots figcaption { font-size: 12px; color: var(--muted); margin-top: 6px; }
 .sim-text p { color: var(--muted); font-size: 16px; max-width: 60ch; margin-bottom: 14px; }
 @media (max-width: 900px) { .sim { grid-template-columns: 1fr; } }
+
+.detail .dgrid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: start; }
+.detail video { width: 100%; border-radius: 14px; border: 1px solid var(--line); display: block; background: #000; }
+.detail .intro { color: var(--powder); font-size: 19px; line-height: 1.5; margin-bottom: 18px; }
+.detail ul.feat { list-style: none; display: grid; gap: 10px; margin-bottom: 20px; }
+.detail ul.feat li { padding-left: 22px; position: relative; color: var(--muted); }
+.detail ul.feat li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 10px; height: 2px; background: var(--amber); }
+.detail .meta { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; margin-bottom: 8px; }
+.detail .meta b { color: var(--powder); font-weight: 700; }
+@media (max-width: 900px) { .detail .dgrid { grid-template-columns: 1fr; } }
 @media (max-width: 900px) {
   .grid { grid-template-columns: 1fr; }
   .card.wide { grid-column: auto; }
@@ -286,10 +296,12 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     </div>
   </section>
 
-  <section class="block" id="glance-sim">
+  <div id="details"></div>
+
+  <section class="block detail" id="p-glance-pay">
     <div class="wrap">
-      <div class="head"><div><p class="eyebrow">Glance Pay · tested on the simulator</p><h3>How it looks on the glasses</h3></div>
-        <a class="btn ghost" href="https://rani43435.github.io/glancepay/" target="_blank" rel="noopener">Open Glance Pay ↗</a></div>
+      <div class="head"><div><p class="eyebrow">Web app · Ray-Ban Display · tested on the simulator</p><h3>Glance Pay</h3></div>
+        <a class="btn ghost" href="https://rani43435.github.io/glancepay/" target="_blank" rel="noopener">Step inside ↗</a></div>
       <div class="sim">
         <div>
           <video src="media/glance-simulator.mp4" controls muted playsinline preload="metadata" poster="media/sim-cafe-confirm.jpg"></video>
@@ -374,27 +386,44 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   window.scrollTo(0, 0);
   addEventListener("load", function () { window.scrollTo(0, 0); });
   var PROJECTS = [
-    { name: "Harley", what: "An AI companion that lives in your room.",
+    { name: "Harley", slug: "p-harley",
+      details: { intro: "Harley is an assistant that does not live in your phone. She stands next to you in your room, talks with you hands-free, sees what you see and gets things done.",
+        features: ["Learn a language with your room: she flies to a real object, asks what it is called and pins the word on it", "Sees what you see: ask “what plant is this?” and she uses the headset camera", "Live answers: weather, news and web search", "Works on your computer: tell her a task and Claude Code does it", "Remembers you: name, plans and likes, saved only on the headset", "Hands: poke, pet, wave, or throw her and she bounces off your real walls"],
+        tech: "Unity 6, URP, Meta XR SDK, Passthrough, Mixed Reality Utility Kit, hand tracking, Wit.ai voice, Supabase back end, Groq, Gemini and Claude.",
+        status: "Submitted to the Meta VR Start Developer Competition 2026 and to Meta Horizon Store review." }, what: "An AI companion that lives in your room.",
       long: "A mixed reality companion for Meta Quest 3 and 3S. Say “Hey Harley” and she answers, sees what you see, teaches you words using the objects in your room, and gets things done on your computer.",
       quote: "Say “Hey Harley” and she answers.", tags: "Unity 6 · Meta Quest 3 / 3S · Mixed reality",
       chips: ["Unity 6", "Meta XR SDK", "Passthrough", "Voice", "AI"], cats: ["vr"],
       link: "https://rani43435.github.io/harley-website/", video: "media/harley.mp4", wide: true },
-    { name: "Maison Lin", what: "Clothes on a 3D rail, tried on through your camera.",
+    { name: "Maison Lin", slug: "p-maison-lin",
+      details: { intro: "A clothing store where every piece hangs on a 3D rail you can spin, and a camera try-on puts it on you before you buy.",
+        features: ["3D rail: every garment is a real 3D model you can turn and inspect", "Camera try-on: the piece is placed on you through your camera", "Admin panel to add pieces and manage the shop", "Calm brand: linen, sand and cacao colours with Cormorant Garamond and Jost"],
+        tech: "three.js, GLB garments made from photos in Blender, plain HTML, CSS and JavaScript, hosted on GitHub Pages.",
+        status: "Live. Growing into a dropshipping store." }, what: "Clothes on a 3D rail, tried on through your camera.",
       long: "A clothing store where every piece hangs on a 3D rail you can spin, and a camera try-on puts it on you before you buy.",
       quote: "Quiet pieces, made to be worn.", tags: "Web · three.js · AR try-on",
       chips: ["three.js", "AR try-on", "Blender"], cats: ["web", "ar"],
       link: "https://rani43435.github.io/maison-lin/", video: "media/maison.mp4" },
-    { name: "Ambient Video", what: "Ambilight for every screen: Mac, RayNeo and Chrome.",
+    { name: "Ambient Video", slug: "p-ambient-video",
+      details: { intro: "Ambient Video reads the colours at the edge of what you watch and paints them softly around the screen, like Ambilight for any screen.",
+        features: ["Mac app that plays your videos with the glow around them", "RayNeo Pocket TV app for the RayNeo Air 4 Pro glasses", "Web player for YouTube links, your own videos or a shared tab", "Chrome extension that adds the glow to any site"],
+        tech: "Swift for the Mac app, Android for RayNeo, HTML canvas colour sampling on the web, Chrome extension APIs.",
+        status: "Mac app and RayNeo app done; Chrome extension on the way to the Chrome Web Store." }, what: "Ambilight for every screen: Mac, RayNeo and Chrome.",
       long: "Reads the colours at the edge of what you watch and paints them softly around the screen. A Mac app, a RayNeo Pocket TV app and a web player.",
       quote: "Let the picture spill into the room.", tags: "Mac app · RayNeo Pocket TV · Web",
       chips: ["Mac app", "RayNeo", "Chrome extension"], cats: ["glasses", "web"],
       link: "https://rani43435.github.io/ambient/", video: "media/ambient.mp4" },
-    { name: "Germany Tour", what: "Fly over German cities in VR, starting with Heidelberg.",
+    { name: "Germany Tour", slug: "p-germany-tour",
+      details: { intro: "A VR city guide you fly through. It starts in Heidelberg and grows into a map of Germany with Berlin, Frankfurt and the other big cities.",
+        features: ["Fly mode over real 3D cities", "Pick a city from a map of Germany", "Points of interest you can fly to", "Built for Meta Quest 3S"],
+        tech: "Unity 6, Meta XR SDK, photorealistic 3D city tiles, Meta Quest 3S.",
+        status: "In active development; demo on request." }, what: "Fly over German cities in VR, starting with Heidelberg.",
       long: "A VR city guide with a fly mode. It starts in Heidelberg and grows into a map of Germany with Berlin, Frankfurt and more.",
       quote: "Heidelberg first. Berlin and Frankfurt next.", tags: "Unity 6 · Meta Quest 3S · VR city guide",
       chips: ["Unity 6", "Quest 3S", "Fly mode"], cats: ["vr"],
       link: "", video: "media/germany.mp4" },
-    { name: "Glance Pay", what: "Pay with a glance through Meta Ray-Ban Display glasses.",
+    { name: "Glance Pay", slug: "p-glance-pay",
+      details: null, what: "Pay with a glance through Meta Ray-Ban Display glasses.",
       long: "A payment app for Meta Ray-Ban Display. Pick a card, look at the shop's code, done. Comes with a shop till for the other side of the counter.",
       quote: "No phone.", tags: "Web app · Ray-Ban Display",
       chips: ["Ray-Ban Display", "Web app", "Payments"], cats: ["glasses", "web"],
@@ -409,9 +438,10 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   // ================= Normal site: project grid with categories =================
   var grid = $("grid");
   grid.innerHTML = PROJECTS.map(function (p, i) {
-    var link = p.link
-      ? '<a class="pill" href="' + p.link + '" target="_blank" rel="noopener">Open the project ↗</a>'
-      : '<span class="soon">Demo on request</span><a class="under" href="mailto:marjyrany@gmail.com">Ask for a demo</a>';
+    var link = (p.link
+      ? '<a class="pill" href="' + p.link + '" target="_blank" rel="noopener">Step inside ↗</a>'
+      : '<a class="pill" href="mailto:marjyrany@gmail.com">Ask for a demo</a>') +
+      '<a class="under" href="#' + p.slug + '">More details</a>';
     return '<article class="card' + (p.wide ? ' wide' : '') + '" data-cats="' + p.cats.join(" ") + '">' +
       '<div class="media"><video src="' + p.video + '" muted loop playsinline preload="metadata"></video>' +
       '<span class="badge">' + String(i + 1).padStart(2, "0") + ' · ' + CATS.filter(function (c) { return c[0] === p.cats[0]; })[0][1] + '</span></div>' +
@@ -436,6 +466,18 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     });
     $("empty").style.display = shownCount ? "none" : "block";
   });
+  // project pages inside the site ("More details")
+  $("details").innerHTML = PROJECTS.filter(function (p) { return p.details; }).map(function (p) {
+    var d = p.details;
+    return '<section class="block detail" id="' + p.slug + '"><div class="wrap">' +
+      '<div class="head"><div><p class="eyebrow">' + p.tags + '</p><h3>' + p.name + '</h3></div>' +
+      (p.link ? '<a class="btn" href="' + p.link + '" target="_blank" rel="noopener">Step inside ↗</a>' : '<a class="btn" href="mailto:marjyrany@gmail.com">Ask for a demo</a>') + '</div>' +
+      '<div class="dgrid"><video src="' + p.video + '" controls muted loop playsinline preload="metadata"></video>' +
+      '<div><p class="intro">' + d.intro + '</p><ul class="feat">' + d.features.map(function (f) { return "<li>" + f + "</li>"; }).join("") + '</ul>' +
+      '<p class="meta"><b>Built with</b> ' + d.tech + '</p><p class="meta"><b>Status</b> ' + d.status + '</p></div></div>' +
+      '<p style="margin-top:24px"><a class="under" href="#work">← All projects</a></p></div></section>';
+  }).join("");
+
   // play card videos only while visible
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (es) {
@@ -493,7 +535,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
   $("play").addEventListener("click", playAll);
 
-  var atlasTex = makeVideo("media/atlas.mp4?v=9");
+  var atlasTex = makeVideo("media/atlas.mp4?v=10");
   var projTex = PROJECTS.map(function (p) { return makeVideo(p.video); });
   var projVideos = videos.slice(1);
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
@@ -575,7 +617,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 
   // ---- the visitor: oversized hoodie with the hood up, wide jeans (Blender) ----
   var visitor = new THREE.Group(); visitor.position.set(0, 0, CZ); scene.add(visitor);
-  new THREE.GLTFLoader().load("media/visitor.glb?v=9", function (g) {
+  new THREE.GLTFLoader().load("media/visitor.glb?v=10", function (g) {
     var m = g.scene;
     m.rotation.y = Math.PI;      // faces the wall, back to the camera
     m.scale.setScalar(1.25);
@@ -642,9 +684,10 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     $("p-what").textContent = p.what;
     $("p-quote").textContent = p.quote;
     $("p-tags").textContent = p.tags;
-    $("p-links").innerHTML = p.link
-      ? '<a class="pill" href="' + p.link + '" target="_blank" rel="noopener">Step inside →</a><a class="under" href="' + p.link + '" target="_blank" rel="noopener">Open in a new tab ↗</a>'
-      : '<a class="pill" href="mailto:marjyrany@gmail.com">Ask for a demo →</a>';
+    $("p-links").innerHTML = (p.link
+      ? '<a class="pill" href="' + p.link + '" target="_blank" rel="noopener">Step inside →</a>'
+      : '<a class="pill" href="mailto:marjyrany@gmail.com">Ask for a demo →</a>') +
+      '<a class="under" href="#' + p.slug + '">More details ↓</a>';
     $("prev").disabled = i === 0;
     $("next").textContent = i === N - 1 ? "See all work ↓" : "Next project →";
     Array.prototype.forEach.call(indexEl.children, function (b, k) { b.classList.toggle("on", k === i); });
@@ -683,6 +726,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   var tmp = new THREE.Vector3(), look = new THREE.Vector3();
   function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2; }
   function clamp01(x) { return Math.min(Math.max(x, 0), 1); }
+  function smooth(x) { return x * x * x * (x * (x * 6 - 15) + 10); }
 
   function frame(now) {
     requestAnimationFrame(frame);
@@ -696,20 +740,26 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     var spin = reduce ? 0 : 1;
     for (var i = 0; i < rings.length; i++) rings[i].m.rotation.y += rings[i].s * dt * spin;
 
-    var f = ease(clamp01((p - FLY0) / (FLY1 - FLY0)));
+    var f = clamp01((p - FLY0) / (FLY1 - FLY0));
 
-    camPath.getPoint(f, tmp); lookPath.getPoint(f, look);
-    // while looking down the shaft, the mouse shifts the view across it
-    var free = 1 - f;
+    // One continuous swoop around the visitor: straight down the shaft first, then the camera
+    // swings from overhead to just behind him (no path corners, no camera roll)
+    var drop = smooth(clamp01(f / 0.75));                 // distance closes in
+    var swing = smooth(clamp01((f - 0.35) / 0.65));       // overhead -> behind
+    var el = (89.4 - 80.4 * swing) * Math.PI / 180;
+    var rad = (SHAFT_TOP + 8) + (4.8 - (SHAFT_TOP + 8)) * drop;
+    var TGT_Y = 1.5;
+    tmp.set(0, TGT_Y + Math.sin(el) * rad, Math.cos(el) * rad);
+    look.set(0, TGT_Y + 1.5 * swing, -6 * swing);
+    var free = 1 - swing;
     tmp.x += sx * 3 * free; tmp.z += sy * 3 * free;
     if (p > ROOM0) {
       var rp = (p - ROOM0) / (ROOM1 - ROOM0);
-      var a = (rp - 0.5) * 0.7 + Math.sin(time * 0.25) * 0.03 - sx * 0.45;
-      tmp.set(Math.sin(a) * 4.6, 1.55 - sy * 0.3 + Math.sin(time * 0.4) * 0.04, CZ + Math.cos(a) * 4.6);
-      look.set(sx * 1.5, 3.0 - sy * 0.8, -6);
+      var a = (rp - 0.5) * 0.6 + Math.sin(time * 0.25) * 0.03 - sx * 0.45;
+      tmp.set(Math.sin(a) * 4.8, TGT_Y + Math.sin(9 * Math.PI / 180) * 4.8 - sy * 0.3 + Math.sin(time * 0.4) * 0.04, CZ + Math.cos(a) * 4.8);
+      look.set(sx * 1.5, TGT_Y + 1.5 - sy * 0.8, -6);
     }
-    // camera "up" turns from pointing along the shaft floor (looking down) to world up (looking ahead)
-    camera.up.copy(UP_DOWN).lerp(UP_Y, clamp01((f - 0.45) / 0.4)).normalize();
+    camera.up.set(0, 1, 0);
     camera.position.copy(tmp); camera.lookAt(look);
 
     // leaving: fade to the site colour
@@ -718,8 +768,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     var inRoom = p > ROOM0 - 0.02 && p < ROOM1 + 0.02;
     if (inRoom) showProject(currentIndex(p));
     feature.visible = inRoom;
-    featT = Math.min(1, featT + dt / 1.1);
-    var ft = ease(featT);
+    featT = Math.min(1, featT + dt / 0.6);
+    var ft = 1 - Math.pow(1 - featT, 3);
     feature.position.lerpVectors(FEAT_WALL, FEAT_HOME, ft);
     feature.position.y += Math.sin(time * 0.9) * 0.06 * ft;
     feature.scale.setScalar(0.35 + 0.65 * ft);
@@ -728,7 +778,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     setO("o-title", band(p, -1, 0, 0.02, 0.06));
     setO("o-hint", band(p, -1, 0, 0.01, 0.03));
     setO("o-cap1", band(p, 0.0, 0.015, 0.09, 0.13));
-    setO("o-cap2", band(p, 0.15, 0.19, 0.25, 0.28));
+    setO("o-cap2", band(p, 0.11, 0.14, 0.19, 0.22));
     setO("o-project", band(p, ROOM0 - 0.01, ROOM0 + 0.01, ROOM1 - 0.005, ROOM1 + 0.01));
     setO("o-nav", band(p, ROOM0 - 0.01, ROOM0 + 0.01, ROOM1, ROOM1 + 0.02));
     
