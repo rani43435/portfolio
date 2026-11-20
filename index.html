@@ -786,7 +786,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   function jump(i) {
     var y = pToY(projP(i));
     if (p >= ROOM0 - 0.01) {
-      window.scrollTo({ top: y, behavior: "auto" });
+      window.scrollTo({ top: y, behavior: "instant" });
       p = target = projP(i);                   // snap: the room camera does not move, only the screen changes
     } else {
       forced = i; go(y);                       // from the tunnel: keep the fly-in, show the chosen project once inside
@@ -939,7 +939,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
     var i = wallHit(e);
     if (i < 0) return;
     var t = TP.indexOf(PROJECTS[i]);
-    if (t >= 0) jump(t); else window.scrollTo({ top: $(PROJECTS[i].slug).offsetTop, behavior: "auto" });
+    if (t >= 0) jump(t); else window.scrollTo({ top: $(PROJECTS[i].slug).offsetTop, behavior: "instant" });
   });
   stage.parentNode.addEventListener("mousemove", function (e) {
     if (e.target.closest("a, button")) return;
