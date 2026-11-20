@@ -11,7 +11,7 @@
 /* Palette: Midnight Cherry, Powder White, Amber Yellow.
    Layout: a pinned 3D journey (one tunnel of turning project screens, down to the amber
    sphere at the bottom of the shaft; standing on it, each project steps off the wall), then a normal
-   portfolio site underneath: work with categories, what I do, about, stack, contact. */
+   portfolio site underneath: work with categories, what I do, contact. */
 :root {
   --cherry: #430107;
   --cherry-deep: #240003;
@@ -91,7 +91,7 @@ ul { list-style: none; }
 .btn { display: inline-flex; align-items: center; gap: 8px; background: var(--amber); color: var(--cherry); font-weight: 700; font-size: 14px; padding: 11px 20px; border-radius: 999px; text-decoration: none; border: 0; cursor: pointer; }
 .btn.ghost { background: transparent; color: var(--powder); border: 1px solid var(--line); }
 
-.hero { padding: 110px 0 90px; }
+.hero { padding-top: 110px; padding-bottom: 90px; }
 .eyebrow { font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); margin-bottom: 18px; }
 .hero h2 { font-family: var(--display); font-weight: 400; font-size: clamp(54px, 8vw, 120px); line-height: 0.95; max-width: 13ch; text-wrap: balance; }
 .hero h2 em { color: var(--amber); }
@@ -176,6 +176,24 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 .detail .meta { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; margin-bottom: 8px; }
 .detail .meta b { color: var(--powder); font-weight: 700; }
 @media (max-width: 900px) { .detail .dgrid { grid-template-columns: 1fr; } }
+.dfoot { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.more-btn { font: 700 14px var(--body); color: var(--cherry); background: var(--amber); border: 0; border-radius: 999px; padding: 11px 20px; cursor: pointer; margin-left: auto; }
+.more-btn span { display: inline-block; min-width: 20px; padding: 1px 6px; margin-left: 4px; border-radius: 999px; background: rgba(67, 1, 7, 0.15); font-variant-numeric: tabular-nums; }
+.more-btn:hover { transform: translateY(-1px); }
+.mv { position: fixed; inset: 0; z-index: 50; background: rgba(20, 0, 2, 0.82); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; padding: 24px; }
+.mv[hidden] { display: none; }
+html.mv-open, html.mv-open body { overflow: hidden; }
+.mv-box { width: min(1100px, 100%); max-height: 100%; display: flex; flex-direction: column; gap: 16px; }
+.mv-head { display: flex; justify-content: space-between; align-items: end; gap: 16px; }
+.mv-head h3 { font-family: var(--display); font-weight: 400; font-size: clamp(32px, 4vw, 52px); line-height: 1; }
+.mv-x { width: 44px; height: 44px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--powder); font-size: 26px; line-height: 1; cursor: pointer; flex: none; }
+.mv-stage { display: flex; justify-content: center; min-height: 0; }
+.mv-stage video { width: auto; max-width: 100%; height: auto; max-height: 70vh; border-radius: 14px; border: 1px solid var(--line); background: #000; display: block; }
+.mv-stage video.tall { width: auto; max-width: 100%; height: 70vh; }
+.mv-tabs { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.mv-tabs button { font: 600 14px var(--body); color: var(--powder); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 9px 16px; cursor: pointer; }
+.mv-tabs button[aria-pressed="true"] { background: var(--amber); color: var(--cherry); border-color: var(--amber); }
+.mv-tabs small { opacity: 0.65; font-weight: 600; }
 @media (max-width: 900px) {
   .grid { grid-template-columns: 1fr; }
   .card.wide { grid-column: auto; }
@@ -186,15 +204,48 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   .stats div:nth-child(3) { padding-left: 0; }
 }
 @media (max-width: 640px) {
-  .brand { left: 16px; top: 16px; }
+  #journey { height: 640vh; }
+  .index { display: none; }
+  .brand { left: 12px; top: 12px; padding: 8px 12px; }
+  .title h1 { font-size: clamp(52px, 17vw, 84px); }
+  .title p { font-size: 12px; }
+  .caption { font-size: 26px; bottom: 84px; }
+  .project h2 { font-size: clamp(40px, 12vw, 56px); margin: 4px 0 8px; }
+  .project .what { font-size: 13px; }
+  .project .tags { display: none; }
+  .project .links { gap: 14px; }
+  .nav-row { bottom: max(18px, env(safe-area-inset-bottom)); gap: 8px; padding: 0 12px; }
+  .nav-row button { flex: 1; padding: 13px 10px; font-size: 13px; }
+  .topnav .wrap { height: auto; padding-top: 10px; padding-bottom: 10px; flex-wrap: wrap; row-gap: 8px; }
+  .topnav .btn.ghost { padding: 8px 14px; font-size: 13px; }
+  .topnav nav { display: flex; order: 3; width: 100%; gap: 18px; overflow-x: auto; scrollbar-width: none; font-size: 14px; }
+  .topnav nav::-webkit-scrollbar { display: none; }
+  .hero h2 { font-size: clamp(46px, 13vw, 64px); }
+  .hero p { font-size: 16px; }
+  .stats b { font-size: 38px; }
+  .stats div { padding: 16px 0 16px 14px; }
+  .head h3 { font-size: 40px; }
+  .filters { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px 4px; scrollbar-width: none; width: calc(100% + 32px); }
+  .filters::-webkit-scrollbar { display: none; }
+  .filters button { flex: none; }
+  .card h4 { font-size: 32px; }
+  .card .body { padding: 18px 18px 20px; }
+  .detail .intro { font-size: 17px; }
+  .dfoot { flex-direction: column-reverse; align-items: stretch; }
+  .dfoot .under { align-self: flex-start; }
+  .more-btn { margin-left: 0; text-align: center; padding: 14px 20px; }
+  .mv { padding: 12px; align-items: flex-end; }
+  .mv-box { gap: 12px; padding-bottom: env(safe-area-inset-bottom); }
+  .mv-stage video.tall { height: 66vh; }
+  .contact { padding: 84px 0; }
+  .brand { left: 12px; top: 12px; }
   .index { right: 16px; top: 16px; font-size: 12px; }
   .caption, .project { left: 16px; right: 16px; max-width: none; }
-  .project { bottom: 86px; }
+  .project { bottom: 84px; padding: 14px 16px 16px; border-radius: 16px; background: rgba(36, 0, 3, 0.74); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-shadow: none; }
   .project .quote { font-size: 17px; }
   .skip { display: none; }
   .wrap { padding: 0 16px; }
-  .topnav nav { display: none; }
-  .hero { padding: 72px 0 64px; }
+  .hero { padding-top: 56px; padding-bottom: 56px; }
   section.block { padding: 72px 0; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -224,7 +275,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     </div>
     <div class="ui caption" data-o id="o-cap1">
       Every screen is a real project.
-      <small>Five of them, played on every wall, turning without end. Scroll, and the camera flies in.</small>
+      <small>Eight of them, played on every wall, turning without end. Scroll, and the camera flies in.</small>
     </div>
     <div class="ui caption" data-o id="o-cap2">
       Take one off the wall.
@@ -232,7 +283,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     </div>
 
     <div class="ui project" data-o id="o-project" aria-live="polite">
-      <div class="num" id="p-num">01 / 05</div>
+      <div class="num" id="p-num">01 / 08</div>
       <h2 id="p-name">Harley</h2>
       <div class="what" id="p-what"></div>
       <div class="quote" id="p-quote"></div>
@@ -259,7 +310,6 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       <nav aria-label="Site">
         <a href="#work">Work</a>
         <a href="#services">What I do</a>
-        <a href="#about">About</a>
         <a href="#contact">Contact</a>
       </nav>
       <a class="btn ghost" href="#journey">↑ Back to the tunnel</a>
@@ -275,9 +325,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       <a class="btn ghost" href="mailto:marjyrany@gmail.com">Email me</a>
     </div>
     <div class="stats">
-      <div><b>5</b><span>Shipped projects</span></div>
+      <div><b>8</b><span>Projects</span></div>
       <div><b>3</b><span>Platforms: Quest, glasses, web</span></div>
-      <div><b>4</b><span>Live sites</span></div>
+      <div><b>5</b><span>Live links</span></div>
       <div><b>2026</b><span>Meta VR Start competition entry</span></div>
     </div>
   </div>
@@ -317,6 +367,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
           <figure><img src="media/sim-dark-confirm.jpg" alt="Confirm screen on the bare display" loading="lazy"><figcaption>Display only</figcaption></figure>
         </div>
       </div>
+      <div class="dfoot"><a class="under" href="#work">← All projects</a><button type="button" class="more-btn" data-more="p-glance-pay">More videos <span>2</span> →</button></div>
     </div>
   </section>
 
@@ -331,35 +382,6 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     </div>
   </section>
 
-  <section class="block" id="about">
-    <div class="wrap about">
-      <div>
-        <p class="eyebrow">About</p>
-        <h3 style="font-family:var(--display);font-weight:400;font-size:clamp(40px,5vw,68px);line-height:1;margin-bottom:26px">Self-taught, and shipping.</h3>
-        <p>I'm <strong>Rani Marjy</strong>, a VR and AR developer. I taught myself Unity, C# and Blender by building things, and I now study <strong>Augmented &amp; Virtual Reality Design (AVRD)</strong> at Hochschule Darmstadt.</p>
-        <p>I like projects that leave the screen: a companion that stands next to you, a video that spills light onto your wall, a payment you make with a glance.</p>
-      </div>
-      <dl class="facts">
-        <div><dt>Focus</dt><dd>VR, AR, 3D web</dd></div>
-        <div><dt>Headsets</dt><dd>Meta Quest 3 / 3S</dd></div>
-        <div><dt>Glasses</dt><dd>Ray-Ban Display, RayNeo</dd></div>
-        <div><dt>Studying</dt><dd>AVRD, h-da</dd></div>
-        <div><dt>Languages</dt><dd>Arabic, English, German</dd></div>
-      </dl>
-    </div>
-  </section>
-
-  <section class="block" id="stack-sec">
-    <div class="wrap">
-      <div class="head"><div><p class="eyebrow">Stack</p><h3>Tools I build with</h3></div></div>
-      <ul class="stack">
-        <li><b>XR</b>Unity 6</li><li><b>XR</b>Meta XR SDK</li><li><b>XR</b>XR Interaction Toolkit</li><li><b>XR</b>MRUK</li>
-        <li><b>Code</b>C#</li><li><b>Code</b>TypeScript</li><li><b>Web</b>three.js</li><li><b>Web</b>Next.js</li>
-        <li><b>Data</b>Supabase</li><li><b>Data</b>PostgreSQL</li><li><b>3D</b>Blender</li><li><b>Video</b>Remotion</li>
-      </ul>
-    </div>
-  </section>
-
   <section class="contact" id="contact">
     <div class="wrap">
       <p class="eyebrow">Contact</p>
@@ -367,13 +389,20 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       <p>Tell me about your idea, a collaboration or a role. I answer every email.</p>
       <div class="links">
         <a class="btn" href="mailto:marjyrany@gmail.com">Email me →</a>
-        <a class="btn ghost" href="https://github.com/rani43435" target="_blank" rel="noopener">GitHub ↗</a>
       </div>
       <div class="mail">marjyrany@gmail.com</div>
     </div>
   </section>
 
   <footer><div class="wrap"><span>© 2026 Rani Marjy · 3D visitor and idle animation: Mixamo</span><a href="#journey">Back to the tunnel ↑</a></div></footer>
+</div>
+
+<div class="mv" id="mv" role="dialog" aria-modal="true" aria-labelledby="mv-title" hidden>
+  <div class="mv-box">
+    <div class="mv-head"><div><p class="eyebrow" style="margin:0">More videos</p><h3 id="mv-title"></h3></div><button type="button" class="mv-x" id="mv-x" aria-label="Close">×</button></div>
+    <div class="mv-stage"><video id="mv-video" controls playsinline></video></div>
+    <div class="mv-tabs" id="mv-tabs"></div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
@@ -394,16 +423,35 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       long: "A mixed reality companion for Meta Quest 3 and 3S. Say “Hey Harley” and she answers, sees what you see, teaches you words using the objects in your room, and gets things done on your computer.",
       quote: "Say “Hey Harley” and she answers.", tags: "Unity 6 · Meta Quest 3 / 3S · Mixed reality",
       chips: ["Unity 6", "Meta XR SDK", "Passthrough", "Voice", "AI"], cats: ["vr"],
-      link: "https://rani43435.github.io/harley-website/", video: "media/harley.mp4", wide: true },
-    { name: "Maison Lin", slug: "p-maison-lin",
-      details: { intro: "A clothing store where every piece hangs on a 3D rail you can spin, and a camera try-on puts it on you before you buy.",
-        features: ["3D rail: every garment is a real 3D model you can turn and inspect", "Camera try-on: the piece is placed on you through your camera", "Admin panel to add pieces and manage the shop", "Calm brand: linen, sand and cacao colours with Cormorant Garamond and Jost"],
-        tech: "three.js, GLB garments made from photos in Blender, plain HTML, CSS and JavaScript, hosted on GitHub Pages.",
-        status: "Live. Growing into a dropshipping store." }, what: "Clothes on a 3D rail, tried on through your camera.",
-      long: "A clothing store where every piece hangs on a 3D rail you can spin, and a camera try-on puts it on you before you buy.",
-      quote: "Quiet pieces, made to be worn.", tags: "Web · three.js · AR try-on",
-      chips: ["three.js", "AR try-on", "Blender"], cats: ["web", "ar"],
-      link: "https://rani43435.github.io/maison-lin/", video: "media/maison.mp4" },
+      link: "https://rani43435.github.io/harley-website/", video: "media/harley.mp4", wide: true,
+      more: [{ src: "media/harley-trailer.mp4", label: "Trailer" }, { src: "media/harley-ad.mp4", label: "Ad" }] },
+    { name: "Afterglow", slug: "p-afterglow",
+      details: { intro: "A VR experience that lets you feel what addiction is like, from the inside. Three open worlds, one after the other, with a narrator who talks to you instead of lecturing you.",
+        features: ["World one: normal life, calm and ordinary", "World two: the bright, euphoric side, where everything glows", "World three: the dark world, where you realise, try to get out and get stuck", "Addiction kept general, with quiet hints at specific kinds", "A narrator voice that is playful and lived-in, not a lecture"],
+        tech: "Unity 6, Meta XR SDK, Meta Quest. The film here is a concept teaser for the three worlds.",
+        status: "In development as a university team project." }, what: "Feel what addiction is like, in VR.",
+      long: "A VR experience in three open worlds: normal life, the bright euphoric side, then the dark world where you try to get out and get stuck.",
+      quote: "Then the light stays on.", tags: "Unity 6 · Meta Quest · VR experience",
+      chips: ["Unity 6", "Meta Quest", "Storytelling"], cats: ["vr"],
+      link: "", video: "media/afterglow.mp4", clip: "media/t-afterglow.mp4" },
+    { name: "Germany Tour", slug: "p-germany-tour",
+      details: { intro: "A VR city guide you fly through. It starts in Heidelberg and grows into a map of Germany with Berlin, Frankfurt and the other big cities.",
+        features: ["Fly mode over real 3D cities", "Pick a city from a map of Germany", "Points of interest you can fly to, or take the balloon", "Built for Meta Quest 3S"],
+        tech: "Unity 6, Meta XR SDK, photorealistic 3D city tiles, Meta Quest 3S.",
+        status: "In active development; demo on request." }, what: "Fly over German cities in VR, starting with Heidelberg.",
+      long: "A VR city guide with a fly mode. It starts in Heidelberg and grows into a map of Germany with Berlin, Frankfurt and more.",
+      quote: "Heidelberg first. Berlin and Frankfurt next.", tags: "Unity 6 · Meta Quest 3S · VR city guide",
+      chips: ["Unity 6", "Quest 3S", "Fly mode"], cats: ["vr"],
+      link: "", video: "media/germany.mp4", clip: "media/t-germany.mp4" },
+    { name: "Inverra", slug: "p-inverra",
+      details: { intro: "A world you can walk into from any browser or headset. On the planet Inverra the ground is above you and below you, small sticky-footed creatures walk on every side, and a black hole feeds the planet with light.",
+        features: ["A short story film told inside the world: The Spine, its residents, and THE SPOT who comes to steal its energy", "Open it in a browser, on a phone or in a VR headset", "Built on my own Alien Settlement environment from Blender", "Characters, buildings and lighting made for the web"],
+        tech: "FrameVR, Blender, web 3D.",
+        status: "Live at framevr.io/inverra. University assignment." }, what: "A walk-in world where the ground is above you.",
+      long: "A FrameVR world and story film: a planet where the ground is above and below you, its sticky-footed residents, and the villain who comes for its light.",
+      quote: "In a parallel universe…", tags: "FrameVR · Blender · Web VR",
+      chips: ["FrameVR", "Blender", "Web VR"], cats: ["vr", "web", "3d"],
+      link: "https://framevr.io/inverra", video: "media/inverra.mp4", clip: "media/t-inverra.mp4" },
     { name: "Ambient Video", slug: "p-ambient-video",
       details: { intro: "Ambient Video reads the colours at the edge of what you watch and paints them softly around the screen, like Ambilight for any screen.",
         features: ["Mac app that plays your videos with the glow around them", "RayNeo Pocket TV app for the RayNeo Air 4 Pro glasses", "Web player for YouTube links, your own videos or a shared tab", "Chrome extension that adds the glow to any site"],
@@ -412,24 +460,35 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       long: "Reads the colours at the edge of what you watch and paints them softly around the screen. A Mac app, a RayNeo Pocket TV app and a web player.",
       quote: "Let the picture spill into the room.", tags: "Mac app · RayNeo Pocket TV · Web",
       chips: ["Mac app", "RayNeo", "Chrome extension"], cats: ["glasses", "web"],
-      link: "https://rani43435.github.io/ambient/", video: "media/ambient.mp4" },
-    { name: "Germany Tour", slug: "p-germany-tour",
-      details: { intro: "A VR city guide you fly through. It starts in Heidelberg and grows into a map of Germany with Berlin, Frankfurt and the other big cities.",
-        features: ["Fly mode over real 3D cities", "Pick a city from a map of Germany", "Points of interest you can fly to", "Built for Meta Quest 3S"],
-        tech: "Unity 6, Meta XR SDK, photorealistic 3D city tiles, Meta Quest 3S.",
-        status: "In active development; demo on request." }, what: "Fly over German cities in VR, starting with Heidelberg.",
-      long: "A VR city guide with a fly mode. It starts in Heidelberg and grows into a map of Germany with Berlin, Frankfurt and more.",
-      quote: "Heidelberg first. Berlin and Frankfurt next.", tags: "Unity 6 · Meta Quest 3S · VR city guide",
-      chips: ["Unity 6", "Quest 3S", "Fly mode"], cats: ["vr"],
-      link: "", video: "media/germany.mp4" },
+      link: "https://rani43435.github.io/ambient/", video: "media/ambient.mp4",
+      more: [{ src: "media/ambient-wall.mp4", label: "On the wall" }, { src: "media/ambient-promo.mp4", label: "Promo", tall: true }] },
     { name: "Glance Pay", slug: "p-glance-pay",
       details: null, what: "Pay with a glance through Meta Ray-Ban Display glasses.",
       long: "A payment app for Meta Ray-Ban Display. Pick a card, look at the shop's code, done. Comes with a shop till for the other side of the counter.",
       quote: "No phone.", tags: "Web app · Ray-Ban Display",
       chips: ["Ray-Ban Display", "Web app", "Payments"], cats: ["glasses", "web"],
-      link: "https://rani43435.github.io/glancepay/", video: "media/glance.mp4" }
+      link: "https://rani43435.github.io/glancepay/", video: "media/glance.mp4",
+      more: [{ src: "media/glance.mp4", label: "Film" }, { src: "media/glance-promo.mp4", label: "Promo", tall: true }] },
+    { name: "Maison Lin", slug: "p-maison-lin",
+      details: { intro: "A clothing store built like a showroom: every piece hangs on a 3D rail you scroll along, opens into a full product page, and can be tried on through your camera.",
+        features: ["3D rail: scroll or drag along the rail, every garment is a real 3D model", "Product page with colours, sizes, stock and delivery date", "Size guide, wishlist, search and a bag with free-delivery progress", "Shop grid with categories and colour filters", "Camera try-on and an admin panel to run the shop"],
+        tech: "three.js, GLB garments made in Blender, HTML, CSS and JavaScript, Supabase, hosted on GitHub Pages.",
+        status: "Live. Growing into a dropshipping store." }, what: "A 3D showroom store with camera try-on.",
+      long: "A store you scroll along like a rail: open any piece into a full product page, check sizes, add to bag, browse the shop and try it on with your camera.",
+      quote: "Quiet pieces, made to be worn.", tags: "Web · three.js · AR try-on",
+      chips: ["three.js", "AR try-on", "E-commerce"], cats: ["web", "ar"],
+      link: "https://rani43435.github.io/maison-lin/", video: "media/maison.mp4", clip: "media/t-maison.mp4" },
+    { name: "Crystal Explosion", slug: "p-crystal-explosion",
+      details: { intro: "A short Blender film: a crystal drifts through deep space, lightning strikes, a cracked lava planet heats up and everything bursts into light.",
+        features: ["Space scene with nebula, dust and drifting rocks", "Lightning and a glowing, cracked lava planet", "Final burst of light rays", "Modelled, lit, animated and rendered in Blender"],
+        tech: "Blender: modelling, shading, particles, lighting and rendering.",
+        status: "Finished." }, what: "A crystal, a lava planet and a burst of light.",
+      long: "A 25-second Blender film: a crystal drifts through space, lightning strikes, a cracked lava planet glows and bursts into light.",
+      quote: "Everything bursts into light.", tags: "Blender · 3D animation",
+      chips: ["Blender", "Animation", "VFX"], cats: ["3d"],
+      link: "", video: "media/crystal.mp4", clip: "media/t-crystal.mp4" }
   ];
-  var CATS = [["all", "All"], ["vr", "VR & mixed reality"], ["glasses", "Smart glasses"], ["web", "Web"], ["ar", "AR"]];
+  var CATS = [["all", "All"], ["vr", "VR & mixed reality"], ["glasses", "Smart glasses"], ["web", "Web"], ["ar", "AR"], ["3d", "3D & Blender"]];
   var N = PROJECTS.length;
   var $ = function (id) { return document.getElementById(id); };
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -443,7 +502,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       : '<a class="pill" href="mailto:marjyrany@gmail.com">Ask for a demo</a>') +
       '<a class="under" href="#' + p.slug + '">More details</a>';
     return '<article class="card' + (p.wide ? ' wide' : '') + '" data-cats="' + p.cats.join(" ") + '">' +
-      '<div class="media"><video src="' + p.video + '" muted loop playsinline preload="metadata"></video>' +
+      '<div class="media"><video src="' + (p.clip || p.video) + '" muted loop playsinline preload="metadata"></video>' +
       '<span class="badge">' + String(i + 1).padStart(2, "0") + ' · ' + CATS.filter(function (c) { return c[0] === p.cats[0]; })[0][1] + '</span></div>' +
       '<div class="body"><h4>' + p.name + '</h4><p>' + p.long + '</p>' +
       '<ul class="chips">' + p.chips.map(function (c) { return "<li>" + c + "</li>"; }).join("") + '</ul>' +
@@ -466,6 +525,9 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     });
     $("empty").style.display = shownCount ? "none" : "block";
   });
+  function moreBtn(p) {
+    return p.more && p.more.length ? '<button type="button" class="more-btn" data-more="' + p.slug + '">More videos <span>' + p.more.length + '</span> →</button>' : '';
+  }
   // project pages inside the site ("More details")
   $("details").innerHTML = PROJECTS.filter(function (p) { return p.details; }).map(function (p) {
     var d = p.details;
@@ -475,8 +537,29 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
       '<div class="dgrid"><video src="' + p.video + '" controls muted loop playsinline preload="metadata"></video>' +
       '<div><p class="intro">' + d.intro + '</p><ul class="feat">' + d.features.map(function (f) { return "<li>" + f + "</li>"; }).join("") + '</ul>' +
       '<p class="meta"><b>Built with</b> ' + d.tech + '</p><p class="meta"><b>Status</b> ' + d.status + '</p></div></div>' +
-      '<p style="margin-top:24px"><a class="under" href="#work">← All projects</a></p></div></section>';
+      '<div class="dfoot"><a class="under" href="#work">← All projects</a>' + moreBtn(p) + '</div></div></section>';
   }).join("");
+
+  // "More videos" viewer
+  var mv = $("mv"), mvVideo = $("mv-video"), mvTabs = $("mv-tabs");
+  function openMore(slug) {
+    var p = PROJECTS.filter(function (x) { return x.slug === slug; })[0]; if (!p || !p.more) return;
+    $("mv-title").textContent = p.name;
+    mvTabs.innerHTML = p.more.map(function (m, k) { return '<button type="button" data-k="' + k + '" class="' + (m.tall ? 'tall' : '') + '">' + m.label + (m.tall ? ' <small>vertical</small>' : '') + '</button>'; }).join("");
+    function pick(k) {
+      var m = p.more[k];
+      Array.prototype.forEach.call(mvTabs.children, function (b, i) { b.setAttribute("aria-pressed", i === k); });
+      mvVideo.className = m.tall ? "tall" : ""; mvVideo.src = m.src;
+      var pr = mvVideo.play(); if (pr && pr.catch) pr.catch(function () {});
+    }
+    mvTabs.onclick = function (e) { var b = e.target.closest("button"); if (b) pick(+b.getAttribute("data-k")); };
+    mv.hidden = false; document.documentElement.classList.add("mv-open"); pick(0); $("mv-x").focus();
+  }
+  function closeMore() { mvVideo.pause(); mvVideo.removeAttribute("src"); mvVideo.load(); mv.hidden = true; document.documentElement.classList.remove("mv-open"); }
+  document.addEventListener("click", function (e) { var b = e.target.closest("[data-more]"); if (b) openMore(b.getAttribute("data-more")); });
+  $("mv-x").addEventListener("click", closeMore);
+  mv.addEventListener("click", function (e) { if (e.target === mv) closeMore(); });
+  addEventListener("keydown", function (e) { if (e.key === "Escape" && !mv.hidden) closeMore(); });
 
   // play card videos only while visible
   if ("IntersectionObserver" in window) {
@@ -535,8 +618,8 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   }
   $("play").addEventListener("click", playAll);
 
-  var atlasTex = makeVideo("media/atlas.mp4?v=11");
-  var projTex = PROJECTS.map(function (p) { return makeVideo(p.video); });
+  var atlasTex = makeVideo("media/atlas.mp4?v=12");
+  var projTex = PROJECTS.map(function (p) { return makeVideo(p.clip || p.video); });
   var projVideos = videos.slice(1);
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
   var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide });
@@ -620,7 +703,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
   var visitor = new THREE.Group(); visitor.position.set(0, 0, CZ); scene.add(visitor);
   // the visitor: "James" from Mixamo, playing a relaxed idle so he is never frozen
   var mixer = null;
-  new THREE.GLTFLoader().load("media/james.glb?v=2", function (g) {
+  new THREE.GLTFLoader().load("media/james.glb?v=3", function (g) {
     var m = g.scene;
     var box = new THREE.Box3().setFromObject(m), size = new THREE.Vector3(); box.getSize(size);
     m.scale.setScalar(2.2 / size.y);                       // about 2.2 m tall in this scene
@@ -806,7 +889,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     renderer.render(scene, camera);
   }
   // "Take one off the wall": click any screen on the wall to bring that project out
-  var TILE_PROJECT = [0, 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 4, 4, 4, 4]; // atlas tile -> project
+  var TILE_PROJECT = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]; // atlas tile -> project
   var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
   function wallHit(e) {
     var r = renderer.domElement.getBoundingClientRect();
@@ -827,6 +910,7 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
     stage.style.cursor = wallHit(e) >= 0 ? "pointer" : "";
   });
 
+  if (window.matchMedia("(pointer: coarse)").matches) $("o-hint").textContent = "Swipe up to fly in";
   playAll();
   requestAnimationFrame(frame);
 })();
