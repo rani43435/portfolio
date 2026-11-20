@@ -283,7 +283,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
     </div>
 
     <div class="ui project" data-o id="o-project" aria-live="polite">
-      <div class="num" id="p-num">01 / 08</div>
+      <div class="num" id="p-num">01 / 05</div>
       <h2 id="p-name">Harley</h2>
       <div class="what" id="p-what"></div>
       <div class="quote" id="p-quote"></div>
@@ -425,7 +425,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
       chips: ["Unity 6", "Meta XR SDK", "Passthrough", "Voice", "AI"], cats: ["vr"],
       link: "https://rani43435.github.io/harley-website/", video: "media/harley.mp4", wide: true,
       more: [{ src: "media/harley-trailer.mp4", label: "Trailer" }, { src: "media/harley-ad.mp4", label: "Ad" }] },
-    { name: "Afterglow", slug: "p-afterglow",
+    { name: "Afterglow", slug: "p-afterglow", tunnel: false,
       details: { intro: "A VR experience that lets you feel what addiction is like, from the inside. Three open worlds, one after the other, with a narrator who talks to you instead of lecturing you.",
         features: ["World one: normal life, calm and ordinary", "World two: the bright, euphoric side, where everything glows", "World three: the dark world, where you realise, try to get out and get stuck", "Addiction kept general, with quiet hints at specific kinds", "A narrator voice that is playful and lived-in, not a lecture"],
         tech: "Unity 6, Meta XR SDK, Meta Quest. The film here is a concept teaser for the three worlds.",
@@ -443,7 +443,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
       quote: "Heidelberg first. Berlin and Frankfurt next.", tags: "Unity 6 · Meta Quest 3S · VR city guide",
       chips: ["Unity 6", "Quest 3S", "Fly mode"], cats: ["vr"],
       link: "", video: "media/germany.mp4", clip: "media/t-germany.mp4" },
-    { name: "Inverra", slug: "p-inverra",
+    { name: "Inverra", slug: "p-inverra", tunnel: false,
       details: { intro: "A world you can walk into from any browser or headset. On the planet Inverra the ground is above you and below you, small sticky-footed creatures walk on every side, and a black hole feeds the planet with light.",
         features: ["A short story film told inside the world: The Spine, its residents, and THE SPOT who comes to steal its energy", "Open it in a browser, on a phone or in a VR headset", "Built on my own Alien Settlement environment from Blender", "Characters, buildings and lighting made for the web"],
         tech: "FrameVR, Blender, web 3D.",
@@ -478,7 +478,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
       quote: "Quiet pieces, made to be worn.", tags: "Web · three.js · AR try-on",
       chips: ["three.js", "AR try-on", "E-commerce"], cats: ["web", "ar"],
       link: "https://rani43435.github.io/maison-lin/", video: "media/maison.mp4", clip: "media/t-maison.mp4" },
-    { name: "Crystal Explosion", slug: "p-crystal-explosion",
+    { name: "Crystal Explosion", slug: "p-crystal-explosion", tunnel: false,
       details: { intro: "A short Blender film: a crystal drifts through deep space, lightning strikes, a cracked lava planet heats up and everything bursts into light.",
         features: ["Space scene with nebula, dust and drifting rocks", "Lightning and a glowing, cracked lava planet", "Final burst of light rays", "Modelled, lit, animated and rendered in Blender"],
         tech: "Blender: modelling, shading, particles, lighting and rendering.",
@@ -490,6 +490,8 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   ];
   var CATS = [["all", "All"], ["vr", "VR & mixed reality"], ["glasses", "Smart glasses"], ["web", "Web"], ["ar", "AR"], ["3d", "3D & Blender"]];
   var N = PROJECTS.length;
+  // the tunnel only features these; the rest live in the work list below
+  var TP = PROJECTS.filter(function (p) { return p.tunnel !== false; }), NT = TP.length;
   var $ = function (id) { return document.getElementById(id); };
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var small = window.matchMedia("(max-width: 640px)").matches;
@@ -619,7 +621,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   $("play").addEventListener("click", playAll);
 
   var atlasTex = makeVideo("media/atlas.mp4?v=12");
-  var projTex = PROJECTS.map(function (p) { return makeVideo(p.clip || p.video); });
+  var projTex = TP.map(function (p) { return makeVideo(p.clip || p.video); });
   var projVideos = videos.slice(1);
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
   var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide });
@@ -757,20 +759,20 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   // ---- UI ----
   var journey = $("journey"), indexEl = $("index");
   function pToY(p) { return journey.offsetTop + p * (journey.offsetHeight - innerHeight); }
-  function projP(i) { return ROOM0 + (i + 0.5) * (ROOM1 - ROOM0) / N; }
+  function projP(i) { return ROOM0 + (i + 0.5) * (ROOM1 - ROOM0) / NT; }
   function go(y) { window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" }); }
-  PROJECTS.forEach(function (p, i) {
+  TP.forEach(function (p, i) {
     var b = document.createElement("button");
     b.type = "button"; b.textContent = p.name;
     b.addEventListener("click", function () { go(pToY(projP(i))); });
     indexEl.appendChild(b);
   });
   var shown = -1, featT = 1;
-  function currentIndex(p) { return Math.min(N - 1, Math.max(0, Math.floor((p - ROOM0) / ((ROOM1 - ROOM0) / N)))); }
+  function currentIndex(p) { return Math.min(NT - 1, Math.max(0, Math.floor((p - ROOM0) / ((ROOM1 - ROOM0) / NT)))); }
   $("next").addEventListener("click", function () {
     if (target < ROOM0) { go(pToY(projP(0))); return; }
     var i = currentIndex(target);
-    if (i >= N - 1) go($("site").offsetTop); else go(pToY(projP(i + 1)));
+    if (i >= NT - 1) go($("site").offsetTop); else go(pToY(projP(i + 1)));
   });
   $("prev").addEventListener("click", function () {
     var i = currentIndex(target);
@@ -779,8 +781,8 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   function showProject(i) {
     if (i === shown) return;
     shown = i;
-    var p = PROJECTS[i];
-    $("p-num").textContent = String(i + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0");
+    var p = TP[i];
+    $("p-num").textContent = String(i + 1).padStart(2, "0") + " / " + String(NT).padStart(2, "0");
     $("p-name").textContent = p.name;
     $("p-what").textContent = p.what;
     $("p-quote").textContent = p.quote;
@@ -790,7 +792,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
       : '<a class="pill" href="mailto:marjyrany@gmail.com">Ask for a demo →</a>') +
       '<a class="under" href="#' + p.slug + '">More details ↓</a>';
     $("prev").disabled = i === 0;
-    $("next").textContent = i === N - 1 ? "See all work ↓" : "Next project →";
+    $("next").textContent = i === NT - 1 ? "See all work ↓" : "Next project →";
     Array.prototype.forEach.call(indexEl.children, function (b, k) { b.classList.toggle("on", k === i); });
     featMat.map = projTex[i]; featMat.needsUpdate = true;
     // only the shown project's video plays; the others pause to keep the frame rate up
@@ -903,7 +905,9 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   stage.parentNode.addEventListener("click", function (e) {
     if (e.target.closest("a, button")) return;
     var i = wallHit(e);
-    if (i >= 0) go(pToY(projP(i)));
+    if (i < 0) return;
+    var t = TP.indexOf(PROJECTS[i]);
+    if (t >= 0) go(pToY(projP(t))); else go($(PROJECTS[i].slug).offsetTop);
   });
   stage.parentNode.addEventListener("mousemove", function (e) {
     if (e.target.closest("a, button")) return;
