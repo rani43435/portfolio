@@ -701,7 +701,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   var rings = [];
   for (var j = 0; j < TROWS; j++) {
     // rows around the visitor lean towards Harley (atlas tiles 0-3)
-    var tiles = []; for (var k = 0; k < TPER; k++) { var r1 = rnd(), r2 = rnd(); tiles.push(j < 5 && r1 < 0.55 ? Math.floor(r2 * 4) : Math.floor(r2 * 16)); }
+    var tiles = []; for (var k = 0; k < TPER; k++) { var r1 = rnd(), r2 = rnd(); tiles.push(j < 4 && r1 < 0.22 ? Math.floor(r2 * 4) : Math.floor(r2 * 16)); }
     var ring = new THREE.Mesh(ringGeometry(tiles, (j % 2) * 0.5), tunnelMat);
     ring.position.y = ROW_Y0 + j * (ROW_H + ROW_GAP) + ROW_H / 2;
     ring.rotation.y = rnd() * Math.PI * 2;
