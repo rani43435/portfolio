@@ -627,7 +627,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
     return t;
   }
   function playAll() {
-    var list = [videos[0], videos[1 + Math.max(0, typeof shown === "number" ? shown : 0)]];
+    var list = [videos[0], videos[1 + Math.max(0, typeof shown === "number" ? shown : 0)]].concat(typeof atlasExtra === "undefined" ? [] : atlasExtra);
     var blocked = false, pending = list.length;
     list.forEach(function (v) {
       var pr = v.play();
@@ -643,6 +643,15 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   var projVideos = videos.slice(1);
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
   var tunnelMat = new THREE.MeshBasicMaterial({ map: atlasTex, side: THREE.DoubleSide });
+  // extra copies of the wall video started at different times, so the same clip never plays in sync on two screens
+  var COPIES = window.matchMedia("(pointer: coarse)").matches ? 2 : 3;
+  var atlasMats = [tunnelMat], atlasExtra = [];
+  for (var c = 1; c < COPIES; c++) (function (c) {
+    var t = makeVideo("media/atlas.mp4?v=13"), v = videos[videos.length - 1];
+    v.addEventListener("loadedmetadata", function () { v.currentTime = (v.duration || 10) * c / COPIES; }, { once: true });
+    atlasExtra.push(v);
+    atlasMats.push(new THREE.MeshBasicMaterial({ map: t, side: THREE.DoubleSide }));
+  })(c);
 
   function quads(list) {
     var pos = [], uv = [], idx = [], n = 0;
@@ -702,7 +711,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   for (var j = 0; j < TROWS; j++) {
     // rows around the visitor lean towards Harley (atlas tiles 0-3)
     var tiles = []; for (var k = 0; k < TPER; k++) { var r1 = rnd(), r2 = rnd(); tiles.push(j < 4 && r1 < 0.22 ? Math.floor(r2 * 4) : Math.floor(r2 * 16)); }
-    var ring = new THREE.Mesh(ringGeometry(tiles, (j % 2) * 0.5), tunnelMat);
+    var ring = new THREE.Mesh(ringGeometry(tiles, (j % 2) * 0.5), atlasMats[j % atlasMats.length]);
     ring.position.y = ROW_Y0 + j * (ROW_H + ROW_GAP) + ROW_H / 2;
     ring.rotation.y = rnd() * Math.PI * 2;
     tunnel.add(ring);
