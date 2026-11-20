@@ -638,7 +638,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   }
   $("play").addEventListener("click", playAll);
 
-  var atlasTex = makeVideo("media/atlas.mp4?v=12");
+  var atlasTex = makeVideo("media/atlas.mp4?v=13");
   var projTex = TP.map(function (p) { return makeVideo(p.clip || p.video); });
   var projVideos = videos.slice(1);
   // separate materials so the tunnel and the room can fade independently: only one is ever visible
@@ -700,7 +700,8 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   var tunnel = new THREE.Group(); scene.add(tunnel);
   var rings = [];
   for (var j = 0; j < TROWS; j++) {
-    var tiles = []; for (var k = 0; k < TPER; k++) tiles.push(Math.floor(rnd() * 16));
+    // rows around the visitor lean towards Harley (atlas tiles 0-3)
+    var tiles = []; for (var k = 0; k < TPER; k++) { var r1 = rnd(), r2 = rnd(); tiles.push(j < 5 && r1 < 0.55 ? Math.floor(r2 * 4) : Math.floor(r2 * 16)); }
     var ring = new THREE.Mesh(ringGeometry(tiles, (j % 2) * 0.5), tunnelMat);
     ring.position.y = ROW_Y0 + j * (ROW_H + ROW_GAP) + ROW_H / 2;
     ring.rotation.y = rnd() * Math.PI * 2;
@@ -922,7 +923,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
     renderer.render(scene, camera);
   }
   // "Take one off the wall": click any screen on the wall to bring that project out
-  var TILE_PROJECT = [0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7]; // atlas tile -> project
+  var TILE_PROJECT = [0, 0, 0, 0, 1, 2, 2, 3, 4, 4, 5, 5, 6, 6, 7, 7]; // atlas tile -> project
   var ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
   function wallHit(e) {
     var r = renderer.domElement.getBoundingClientRect();
