@@ -176,6 +176,16 @@ footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wr
 .detail .meta { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; margin-bottom: 8px; }
 .detail .meta b { color: var(--powder); font-weight: 700; }
 @media (max-width: 900px) { .detail .dgrid { grid-template-columns: 1fr; } }
+.films { margin-top: 40px; }
+.films-grid { display: grid; grid-template-columns: 1fr 0.633fr 0.633fr; gap: 16px; align-items: start; }
+.films .fw { display: grid; gap: 16px; }
+.films figure { margin: 0; }
+.films video { width: 100%; display: block; border-radius: 14px; border: 1px solid var(--line); background: #000; }
+.films .w video { aspect-ratio: 16 / 9; }
+.films .t video { aspect-ratio: 9 / 16; object-fit: cover; }
+.films figcaption { margin-top: 8px; font-size: 14px; font-weight: 600; color: var(--powder); }
+.films figcaption span { opacity: 0.6; font-weight: 500; }
+@media (max-width: 900px) { .films-grid { grid-template-columns: 1fr 1fr; } .films .fw { grid-column: 1 / -1; } }
 .dfoot { margin-top: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
 .more-btn { font: 700 14px var(--body); color: var(--cherry); background: var(--amber); border: 0; border-radius: 999px; padding: 11px 20px; cursor: pointer; margin-left: auto; }
 .more-btn span { display: inline-block; min-width: 20px; padding: 1px 6px; margin-left: 4px; border-radius: 999px; background: rgba(67, 1, 7, 0.15); font-variant-numeric: tabular-nums; }
@@ -424,7 +434,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
       quote: "Say “Hey Harley” and she answers.", tags: "Unity 6 · Meta Quest 3 / 3S · Mixed reality",
       chips: ["Unity 6", "Meta XR SDK", "Passthrough", "Voice", "AI"], cats: ["vr"],
       link: "https://rani43435.github.io/harley-website/", video: "media/harley.mp4", wide: true,
-      more: [{ src: "media/harley-trailer.mp4", label: "Trailer" }, { src: "media/harley-ad.mp4", label: "Ad" }] },
+      films: [{ src: "media/harley-trailer.mp4", label: "Trailer", note: "2 min" }, { src: "media/harley-ad.mp4", label: "Ad" }, { src: "media/harley-reel.mp4", label: "Reel", tall: true }, { src: "media/harley-product.mp4", label: "Product film", tall: true }] },
     { name: "Afterglow", slug: "p-afterglow", tunnel: false,
       details: { intro: "A VR experience that lets you feel what addiction is like, from the inside. Three open worlds, one after the other, with a narrator who talks to you instead of lecturing you.",
         features: ["World one: normal life, calm and ordinary", "World two: the bright, euphoric side, where everything glows", "World three: the dark world, where you realise, try to get out and get stuck", "Addiction kept general, with quiet hints at specific kinds", "A narrator voice that is playful and lived-in, not a lecture"],
@@ -527,6 +537,13 @@ html.mv-open, html.mv-open body { overflow: hidden; }
     });
     $("empty").style.display = shownCount ? "none" : "block";
   });
+  function films(p) {
+    if (!p.films) return "";
+    function v(f, cls) { return '<figure class="' + cls + '"><video src="' + f.src + '" poster="' + f.src.replace(".mp4", ".jpg") + '" controls playsinline preload="none"></video><figcaption>' + f.label + (f.note ? ' <span>' + f.note + '</span>' : '') + '</figcaption></figure>'; }
+    var wide = p.films.filter(function (f) { return !f.tall; }), tall = p.films.filter(function (f) { return f.tall; });
+    return '<div class="films"><p class="eyebrow">Films</p><div class="films-grid"><div class="fw">' + wide.map(function (f) { return v(f, "w"); }).join("") + '</div>' +
+      tall.map(function (f) { return v(f, "t"); }).join("") + '</div></div>';
+  }
   function moreBtn(p) {
     return p.more && p.more.length ? '<button type="button" class="more-btn" data-more="' + p.slug + '">More videos <span>' + p.more.length + '</span> →</button>' : '';
   }
@@ -539,6 +556,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
       '<div class="dgrid"><video src="' + p.video + '" controls muted loop playsinline preload="metadata"></video>' +
       '<div><p class="intro">' + d.intro + '</p><ul class="feat">' + d.features.map(function (f) { return "<li>" + f + "</li>"; }).join("") + '</ul>' +
       '<p class="meta"><b>Built with</b> ' + d.tech + '</p><p class="meta"><b>Status</b> ' + d.status + '</p></div></div>' +
+      films(p) +
       '<div class="dfoot"><a class="under" href="#work">← All projects</a>' + moreBtn(p) + '</div></div></section>';
   }).join("");
 
@@ -761,22 +779,34 @@ html.mv-open, html.mv-open body { overflow: hidden; }
   function pToY(p) { return journey.offsetTop + p * (journey.offsetHeight - innerHeight); }
   function projP(i) { return ROOM0 + (i + 0.5) * (ROOM1 - ROOM0) / NT; }
   function go(y) { window.scrollTo({ top: y, behavior: reduce ? "auto" : "smooth" }); }
+  // jump straight to a project: no flying past the ones in between
+  var forced = -1;
+  ["wheel", "touchstart", "keydown"].forEach(function (ev) { addEventListener(ev, function () { forced = -1; }, { passive: true }); });
+  function jump(i) {
+    var y = pToY(projP(i));
+    if (p >= ROOM0 - 0.01) {
+      window.scrollTo({ top: y, behavior: "auto" });
+      p = target = projP(i);                   // snap: the room camera does not move, only the screen changes
+    } else {
+      forced = i; go(y);                       // from the tunnel: keep the fly-in, show the chosen project once inside
+    }
+  }
   TP.forEach(function (p, i) {
     var b = document.createElement("button");
     b.type = "button"; b.textContent = p.name;
-    b.addEventListener("click", function () { go(pToY(projP(i))); });
+    b.addEventListener("click", function () { jump(i); });
     indexEl.appendChild(b);
   });
   var shown = -1, featT = 1;
   function currentIndex(p) { return Math.min(NT - 1, Math.max(0, Math.floor((p - ROOM0) / ((ROOM1 - ROOM0) / NT)))); }
   $("next").addEventListener("click", function () {
-    if (target < ROOM0) { go(pToY(projP(0))); return; }
+    if (target < ROOM0) { jump(0); return; }
     var i = currentIndex(target);
-    if (i >= NT - 1) go($("site").offsetTop); else go(pToY(projP(i + 1)));
+    if (i >= NT - 1) go($("site").offsetTop); else jump(i + 1);
   });
   $("prev").addEventListener("click", function () {
     var i = currentIndex(target);
-    if (i > 0) go(pToY(projP(i - 1)));
+    if (i > 0) jump(i - 1);
   });
   function showProject(i) {
     if (i === shown) return;
@@ -871,7 +901,8 @@ html.mv-open, html.mv-open body { overflow: hidden; }
     $("fade").style.opacity = clamp01((p - ROOM1) / (1 - ROOM1) * 1.15).toFixed(3);
 
     var inRoom = p > ROOM0 - 0.02 && p < ROOM1 + 0.02;
-    if (inRoom) showProject(currentIndex(p));
+    if (forced >= 0 && Math.abs(p - projP(forced)) < 0.005) forced = -1;
+    if (inRoom) showProject(forced >= 0 ? forced : currentIndex(p));
     feature.visible = inRoom;
     featT = Math.min(1, featT + dt / 0.6);
     var ft = 1 - Math.pow(1 - featT, 3);
@@ -907,7 +938,7 @@ html.mv-open, html.mv-open body { overflow: hidden; }
     var i = wallHit(e);
     if (i < 0) return;
     var t = TP.indexOf(PROJECTS[i]);
-    if (t >= 0) go(pToY(projP(t))); else go($(PROJECTS[i].slug).offsetTop);
+    if (t >= 0) jump(t); else window.scrollTo({ top: $(PROJECTS[i].slug).offsetTop, behavior: "auto" });
   });
   stage.parentNode.addEventListener("mousemove", function (e) {
     if (e.target.closest("a, button")) return;
